@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Carregamento de Caminhões</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         .time-normal { color: green; }
         .time-warning { color: orange; font-weight: bold; }
@@ -19,48 +18,6 @@
             letter-spacing: 1px;
             color: #0d6efd;
             font-weight: bold;
-        }
-        #qrCodeContainer {
-            text-align: center;
-            margin: 20px 0;
-        }
-        #qrCodeCanvas {
-            max-width: 200px;
-            margin: 0 auto;
-        }
-        #videoContainer {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        #video {
-            width: 100%;
-            border: 2px solid #0d6efd;
-            border-radius: 5px;
-        }
-        #scanOverlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-        }
-        #scanBox {
-            width: 70%;
-            height: 70%;
-            border: 4px dashed #0d6efd;
-            border-radius: 5px;
-        }
-        #btnCloseScanner {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
         }
     </style>
 </head>
@@ -103,7 +60,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Informações</h5>
-                                <p>Use a câmera para ler o QR code do funcionário ou digite manualmente o código.</p>
+                                <p>Digite o código do funcionário para iniciar ou finalizar o carregamento.</p>
                                 <p>Os códigos começam com <strong>GZL-EO</strong> seguido de identificação única.</p>
                             </div>
                         </div>
@@ -117,12 +74,7 @@
                                 <h5 class="card-title" id="formTitle">Informações do Carregamento</h5>
                                 <div class="mb-3">
                                     <label for="funcionarioId" class="form-label">Código do Funcionário</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="funcionarioId" placeholder="Ex: GZL-EO-1234">
-                                        <button class="btn btn-outline-secondary" type="button" id="btnScanQRCode">
-                                            <i class="bi bi-camera"></i> Ler QR Code
-                                        </button>
-                                    </div>
+                                    <input type="text" class="form-control" id="funcionarioId" placeholder="Ex: GZL-EO-1234">
                                 </div>
                                 <div class="mb-3">
                                     <label for="placaCaminhao" class="form-label">Placa do Caminhão</label>
@@ -130,25 +82,6 @@
                                 </div>
                                 <button id="btnConfirmar" class="btn btn-primary">Confirmar</button>
                                 <button id="btnCancelar" class="btn btn-secondary">Cancelar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Scanner de QR Code -->
-                <div class="row mt-3" id="scannerContainer" style="display: none;">
-                    <div class="col-md-6 offset-md-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Scanner de QR Code</h5>
-                                <div id="videoContainer">
-                                    <video id="video" playsinline></video>
-                                    <div id="scanOverlay">
-                                        <div id="scanBox"></div>
-                                    </div>
-                                    <button id="btnCloseScanner" class="btn btn-danger btn-sm">X Fechar</button>
-                                </div>
-                                <div id="scanResult" class="mt-3 alert alert-info" style="display: none;"></div>
                             </div>
                         </div>
                     </div>
@@ -185,9 +118,6 @@
                             <div class="card-body">
                                 <h5 class="card-title">Código do Funcionário</h5>
                                 <div id="codigoGerado" class="codigo-funcionario mb-3" style="display: none;"></div>
-                                <div id="qrCodeContainer" style="display: none;">
-                                    <canvas id="qrCodeCanvas"></canvas>
-                                </div>
                                 <div id="infoCadastro"></div>
                                 <button id="btnDownloadPDF" class="btn btn-success mt-2" style="display: none;">Download PDF</button>
                             </div>
@@ -202,12 +132,7 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="buscarFuncionario" class="form-label">Código do Funcionário</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="buscarFuncionario" placeholder="Ex: GZL-EO-1234">
-                                <button class="btn btn-outline-secondary" type="button" id="btnBuscarQRCode">
-                                    <i class="bi bi-camera"></i> Ler QR Code
-                                </button>
-                            </div>
+                            <input type="text" class="form-control" id="buscarFuncionario" placeholder="Ex: GZL-EO-1234">
                         </div>
                         <button id="btnBuscar" class="btn btn-info">Buscar</button>
                         <div id="infoFuncionario" class="mt-3"></div>
@@ -400,11 +325,8 @@
         </div>
     </div>
 
-    <!-- Inclui as bibliotecas necessárias -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <script>
@@ -432,22 +354,12 @@
         let operacaoAtual = null; // 'iniciar' ou 'finalizar'
         let carregamentosEmAndamento = {};
         let intervalos = {};
-        let scannerActive = false;
-        let stream = null;
         
         // Gera um código único para o funcionário
         function gerarCodigoFuncionario() {
             const prefixo = "GZL-EO-";
             const randomPart = Math.floor(1000 + Math.random() * 9000); // Número entre 1000 e 9999
             return prefixo + randomPart;
-        }
-        
-        // Gera QR Code para o funcionário
-        function gerarQRCode(codigo, canvasId = 'qrCodeCanvas') {
-            const canvas = document.getElementById(canvasId);
-            QRCode.toCanvas(canvas, codigo, { width: 200 }, (error) => {
-                if (error) console.error('Erro ao gerar QR code:', error);
-            });
         }
         
         // Gera PDF com o código do funcionário
@@ -471,113 +383,29 @@
             doc.setFontSize(24);
             doc.text(codigo, 50, 70);
             
-            // Gera QR code no PDF
-            const qrCodeData = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(codigo)}`;
-            doc.addImage(qrCodeData, 'PNG', 140, 60, 50, 50);
-            
             // Adiciona data de emissão
             doc.setFontSize(10);
-            doc.text(`Emitido em: ${new Date().toLocaleDateString()}`, 20, 130);
+            doc.text(`Emitido em: ${new Date().toLocaleDateString()}`, 20, 100);
             
             // Salva o PDF
             doc.save(`codigo-funcionario-${codigo}.pdf`);
         }
         
-        // Inicia o scanner de QR code
-        function iniciarScanner() {
-            const video = document.getElementById('video');
-            const scanResult = document.getElementById('scanResult');
-            
-            // Mostra o container do scanner
-            document.getElementById('scannerContainer').style.display = 'block';
-            scannerActive = true;
-            scanResult.style.display = 'none';
-            
-            // Solicita permissão para acessar a câmera
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-                .then(function(s) {
-                    stream = s;
-                    video.srcObject = stream;
-                    video.play();
-                    
-                    // Processa o vídeo para detectar QR codes
-                    requestAnimationFrame(tick);
-                })
-                .catch(function(err) {
-                    console.error("Erro ao acessar a câmera:", err);
-                    alert("Não foi possível acessar a câmera. Verifique as permissões.");
-                    pararScanner();
-                });
-        }
-        
-        // Para o scanner de QR code
-        function pararScanner() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
-            scannerActive = false;
-            document.getElementById('scannerContainer').style.display = 'none';
-        }
-        
-        // Processa o vídeo para detectar QR codes
-        function tick() {
-            const video = document.getElementById('video');
-            const canvas = document.createElement('canvas');
-            const scanResult = document.getElementById('scanResult');
-            
-            if (video.readyState === video.HAVE_ENOUGH_DATA && scannerActive) {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                    inversionAttempts: "dontInvert",
-                });
-                
-                if (code) {
-                    // QR code detectado
-                    scanResult.textContent = `Código detectado: ${code.data}`;
-                    scanResult.style.display = 'block';
-                    
-                    // Preenche o campo do funcionário com o código lido
-                    if (operacaoAtual) {
-                        document.getElementById('funcionarioId').value = code.data;
-                    } else {
-                        document.getElementById('buscarFuncionario').value = code.data;
-                    }
-                    
-                    // Para o scanner após 1 segundo
-                    setTimeout(pararScanner, 1000);
-                    return;
-                }
-            }
-            
-            if (scannerActive) {
-                requestAnimationFrame(tick);
-            }
-        }
-        
         // Busca um funcionário pelo ID
         function buscarFuncionario(id, mostrarModal = false) {
-            return new Promise((resolve, reject) => {
-                funcionariosRef.child(id).once('value', (snapshot) => {
-                    const funcionario = snapshot.val();
-                    
-                    if (!funcionario) {
-                        alert('Funcionário não encontrado!');
-                        reject('Funcionário não encontrado');
-                        return;
-                    }
-                    
-                    if (mostrarModal) {
-                        mostrarDetalhesFuncionario(id, funcionario);
-                    }
-                    
-                    resolve(funcionario);
-                });
+            funcionariosRef.child(id).once('value', (snapshot) => {
+                const funcionario = snapshot.val();
+                
+                if (!funcionario) {
+                    alert('Funcionário não encontrado!');
+                    return;
+                }
+                
+                if (mostrarModal) {
+                    mostrarDetalhesFuncionario(id, funcionario);
+                }
+                
+                return funcionario;
             });
         }
         
@@ -597,9 +425,6 @@
                             <p><strong>Nome:</strong> ${funcionario.nome || 'Não informado'}</p>
                             <p><strong>Cargo:</strong> ${funcionario.cargo || 'Não informado'}</p>
                             <p><strong>Total de Carregamentos:</strong> ${carregamentosArray.length}</p>
-                            <div class="mt-3">
-                                <canvas id="qrCodeModal"></canvas>
-                            </div>
                         </div>
                         <div class="col-md-8">
                             <h5>Últimos Carregamentos</h5>
@@ -644,9 +469,6 @@
                 
                 document.getElementById('modalFuncionarioTitle').textContent = `Detalhes: ${funcionario.nome || id}`;
                 document.getElementById('modalFuncionarioBody').innerHTML = html;
-                
-                // Gera QR code no modal
-                gerarQRCode(id, 'qrCodeModal');
                 
                 const modal = new bootstrap.Modal(document.getElementById('modalFuncionario'));
                 modal.show();
@@ -917,15 +739,6 @@
                 document.getElementById('funcionarioId').focus();
             });
             
-            // Botão para ler QR Code na operação
-            document.getElementById('btnScanQRCode').addEventListener('click', iniciarScanner);
-            
-            // Botão para ler QR Code na busca
-            document.getElementById('btnBuscarQRCode').addEventListener('click', iniciarScanner);
-            
-            // Botão para fechar o scanner
-            document.getElementById('btnCloseScanner').addEventListener('click', pararScanner);
-            
             // Confirmar operação
             document.getElementById('btnConfirmar').addEventListener('click', function() {
                 const funcionarioId = document.getElementById('funcionarioId').value.trim();
@@ -1060,10 +873,6 @@
                         // Mostra o código gerado
                         document.getElementById('codigoGerado').textContent = codigo;
                         document.getElementById('codigoGerado').style.display = 'block';
-                        
-                        // Mostra e gera o QR code
-                        document.getElementById('qrCodeContainer').style.display = 'block';
-                        gerarQRCode(codigo);
                         
                         document.getElementById('infoCadastro').innerHTML = `
                             <p><strong>Nome:</strong> ${nome}</p>
