@@ -4,98 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Carregamento de Caminhões</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            padding: 20px;
-        }
-        .dashboard {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .card-colaborador {
-            border-left: 5px solid #4e73df;
-            margin-bottom: 15px;
-            transition: all 0.3s;
-        }
-        .card-colaborador:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .em-carregamento {
-            border-left-color: #1cc88a;
-        }
-        .com-atraso {
-            border-left-color: #e74a3b;
-        }
-        .tempo-decorrido {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        .progress {
-            height: 10px;
-            margin-top: 10px;
-        }
-        .badge-carregamentos {
-            background-color: #36b9cc;
-        }
-        .nav-tabs .nav-link.active {
-            font-weight: bold;
-            background-color: white;
-            border-bottom: 3px solid #4e73df;
-        }
-        .tab-content {
-            background-color: white;
-            border-radius: 0 0 10px 10px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        #qrcode {
-            margin: 20px auto;
-            display: flex;
-            justify-content: center;
-        }
-        #reader {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        #reader__scan_region {
-            background: rgba(0,0,0,0.5);
-        }
-        .time-critical {
-            color: #e74a3b;
-        }
-        .time-warning {
-            color: #f6c23e;
-        }
-        .time-normal {
-            color: #1cc88a;
-        }
-        .card-carregamento {
-            margin-bottom: 15px;
-            border-left: 5px solid #4e73df;
-        }
-        .card-carregamento.em-andamento {
-            border-left-color: #1cc88a;
-        }
-        .card-carregamento.finalizado {
-            border-left-color: #858796;
-        }
-        .table-responsive {
-            overflow-x: auto;
-        }
-        @media (max-width: 768px) {
-            .dashboard-card {
-                margin-bottom: 15px;
-            }
-        }
+        .time-normal { color: green; }
+        .time-warning { color: orange; font-weight: bold; }
+        .time-critical { color: red; font-weight: bold; }
+        .card-carregamento { transition: all 0.3s; }
+        .card-carregamento:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .dashboard-card { height: 100%; }
+        #reader, #qrReader { width: 100%; }
+        #qrcode canvas { max-width: 100%; height: auto; }
     </style>
 </head>
 <body>
@@ -412,6 +330,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.4/dist/html5-qrcode.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
@@ -442,11 +361,22 @@
         let carregamentosEmAndamento = {};
         let intervalos = {};
         
-        // Inicializa o scanner QR Code
-        function initQRScanner() {
-            html5QrCode = new Html5Qrcode("reader");
+        // Função corrigida para inicializar o scanner QR Code
+        function initQRScanner(elementId = 'reader') {
+            // Se já existe uma instância, pare antes de criar uma nova
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => {
+                    console.log("Scanner anterior parado com sucesso");
+                }).catch(err => {
+                    console.error("Erro ao parar scanner anterior:", err);
+                });
+            }
+
+            html5QrCode = new Html5Qrcode(elementId);
             
             const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                console.log(`Código escaneado: ${decodedText}`, decodedResult);
+                
                 if (operacaoAtual) {
                     document.getElementById('funcionarioId').value = decodedText;
                     stopQRScanner();
@@ -460,44 +390,108 @@
                 }
             };
             
-            const config = { fps: 10, qrbox: 250 };
+            const config = { 
+                fps: 10, 
+                qrbox: { width: 250, height: 250 } // Configuração atualizada
+            };
             
-            // Se já estiver escaneando, para primeiro
-            if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().then(() => {
-                    html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
-                }).catch(err => {
-                    console.error("Erro ao reiniciar scanner:", err);
-                });
-            } else {
-                html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
-            }
+            // Inicia o scanner
+            html5QrCode.start(
+                { facingMode: "environment" }, 
+                config, 
+                qrCodeSuccessCallback,
+                (errorMessage) => {
+                    console.log(`Erro no scanner: ${errorMessage}`);
+                }
+            ).catch(err => {
+                console.error("Erro ao iniciar scanner:", err);
+                alert("Erro ao iniciar a câmera. Verifique as permissões.");
+            });
         }
         
-        // Para o scanner QR Code
+        // Função melhorada para parar o scanner QR Code
         function stopQRScanner() {
             if (html5QrCode && html5QrCode.isScanning) {
                 html5QrCode.stop().then(() => {
+                    console.log("Scanner parado com sucesso");
                     document.getElementById('reader').style.display = 'none';
+                    if (document.getElementById('qrReaderContainer')) {
+                        document.getElementById('qrReaderContainer').style.display = 'none';
+                    }
                 }).catch(err => {
                     console.error("Erro ao parar scanner:", err);
                 });
             }
         }
         
-        // Gera um QR Code
+        // Função corrigida para gerar QR Code
         function generateQRCode(text, elementId) {
-            const qr = qrcode(0, 'L');
-            qr.addData(text);
-            qr.make();
-            
-            const qrCodeElement = document.getElementById(elementId);
-            qrCodeElement.innerHTML = qr.createImgTag(4);
-            
-            // Habilita o botão de download
-            document.getElementById('btnDownloadQR').style.display = 'block';
+            try {
+                const typeNumber = 0;
+                const errorCorrectionLevel = 'L';
+                const qr = qrcode(typeNumber, errorCorrectionLevel);
+                qr.addData(text);
+                qr.make();
+                
+                const qrCodeElement = document.getElementById(elementId);
+                qrCodeElement.innerHTML = '';
+                
+                // Cria um canvas para o QR Code
+                const canvas = document.createElement('canvas');
+                const size = 200;
+                canvas.width = size;
+                canvas.height = size;
+                
+                const ctx = canvas.getContext('2d');
+                const cells = qr.getModuleCount();
+                const tileSize = size / cells;
+                
+                // Desenha o QR Code
+                for (let row = 0; row < cells; row++) {
+                    for (let col = 0; col < cells; col++) {
+                        ctx.fillStyle = qr.isDark(row, col) ? '#000000' : '#ffffff';
+                        ctx.fillRect(
+                            col * tileSize,
+                            row * tileSize,
+                            tileSize,
+                            tileSize
+                        );
+                    }
+                }
+                
+                qrCodeElement.appendChild(canvas);
+                
+                // Habilita o botão de download
+                const downloadBtn = document.getElementById('btnDownloadQR');
+                if (downloadBtn) {
+                    downloadBtn.style.display = 'block';
+                    downloadBtn.onclick = function() {
+                        downloadQRCode(canvas, text);
+                    };
+                }
+                
+                return canvas;
+            } catch (error) {
+                console.error("Erro ao gerar QR Code:", error);
+                return null;
+            }
         }
         
+        // Função para download do QR Code
+        function downloadQRCode(canvas, filename) {
+            try {
+                const link = document.createElement('a');
+                link.download = `qrcode-${filename}.png`;
+                link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error("Erro ao fazer download do QR Code:", error);
+                alert("Erro ao fazer download do QR Code");
+            }
+        }
+
         // Busca um funcionário pelo ID
         function buscarFuncionario(id, mostrarModal = false) {
             funcionariosRef.child(id).once('value', (snapshot) => {
@@ -807,40 +801,48 @@
                         `;
                     });
                     
-                    document.getElementById('topFuncionarios').innerHTML = topHtml || '<tr><td colspan="5">Nenhum dado disponível.</td></tr>';
+                    document.getElementById('topFuncionarios').innerHTML = topHtml || '<tr><td colspan="5">Nenhum dado disponível</td></tr>';
                 });
             });
         }
-                // Event Listeners
-                document.addEventListener('DOMContentLoaded', function() {
-            // Inicializa o dashboard e histórico
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializa o dashboard
             atualizarDashboard();
+            
+            // Atualiza o dashboard a cada minuto
+            setInterval(atualizarDashboard, 60000);
+            
+            // Carrega o histórico com os valores atuais
+            const hoje = new Date();
+            document.getElementById('filtroMes').value = (hoje.getMonth() + 1).toString().padStart(2, '0');
+            document.getElementById('filtroAno').value = hoje.getFullYear().toString();
             atualizarHistorico();
             
-            // Configura os intervalos para atualização em tempo real
-            intervalos.dashboard = setInterval(atualizarDashboard, 10000); // Atualiza a cada 10 segundos
-            
-            // Eventos da aba de operação
+            // Operação: Iniciar Carregamento
             document.getElementById('btnIniciarCarregamento').addEventListener('click', function() {
                 operacaoAtual = 'iniciar';
-                document.getElementById('reader').style.display = 'block';
                 document.getElementById('formTitle').textContent = 'Iniciar Carregamento';
                 document.getElementById('formContainer').style.display = 'block';
+                document.getElementById('reader').style.display = 'block';
                 document.getElementById('placaCaminhao').value = '';
                 document.getElementById('funcionarioId').value = '';
-                initQRScanner();
+                initQRScanner('reader');
             });
             
+            // Operação: Finalizar Carregamento
             document.getElementById('btnFinalizarCarregamento').addEventListener('click', function() {
                 operacaoAtual = 'finalizar';
-                document.getElementById('reader').style.display = 'block';
                 document.getElementById('formTitle').textContent = 'Finalizar Carregamento';
                 document.getElementById('formContainer').style.display = 'block';
+                document.getElementById('reader').style.display = 'block';
                 document.getElementById('placaCaminhao').value = '';
                 document.getElementById('funcionarioId').value = '';
-                initQRScanner();
+                initQRScanner('reader');
             });
             
+            // Confirmar operação
             document.getElementById('btnConfirmar').addEventListener('click', function() {
                 const funcionarioId = document.getElementById('funcionarioId').value.trim();
                 const placa = document.getElementById('placaCaminhao').value.trim().toUpperCase();
@@ -859,14 +861,14 @@
                     // Verifica se o funcionário já tem um carregamento em andamento
                     carregamentosRef.orderByChild('funcionarioId').equalTo(funcionarioId).once('value', (snapshot) => {
                         const carregamentos = snapshot.val() || {};
-                        const emAndamento = Object.values(carregamentos).some(c => !c.finalizado);
+                        const carregamentoEmAndamento = Object.values(carregamentos).find(c => c.inicio && !c.finalizado);
                         
-                        if (emAndamento) {
+                        if (carregamentoEmAndamento) {
                             alert('Este funcionário já tem um carregamento em andamento!');
                             return;
                         }
                         
-                        // Cria um novo carregamento
+                        // Cria novo carregamento
                         const novoCarregamento = {
                             funcionarioId,
                             placa,
@@ -891,31 +893,32 @@
                     // Finaliza o carregamento
                     carregamentosRef.orderByChild('funcionarioId').equalTo(funcionarioId).once('value', (snapshot) => {
                         const carregamentos = snapshot.val() || {};
-                        const carregamentoKey = Object.keys(carregamentos).find(key => !carregamentos[key].finalizado);
+                        const carregamentoEmAndamento = Object.entries(carregamentos).find(([key, c]) => c.inicio && !c.finalizado);
                         
-                        if (!carregamentoKey) {
+                        if (!carregamentoEmAndamento) {
                             alert('Nenhum carregamento em andamento encontrado para este funcionário!');
                             return;
                         }
                         
+                        const [key, carregamento] = carregamentoEmAndamento;
+                        
+                        // Atualiza o carregamento
                         const updates = {
                             fim: new Date().getTime(),
-                            finalizado: true
+                            finalizado: true,
+                            placa: placa || carregamento.placa
                         };
                         
-                        carregamentosRef.child(carregamentoKey).update(updates)
+                        carregamentosRef.child(key).update(updates)
                             .then(() => {
                                 // Atualiza estatísticas do dia
                                 const hoje = new Date().toISOString().split('T')[0];
-                                const estatisticasHojeRef = estatisticasRef.child(hoje);
-                                
-                                estatisticasHojeRef.transaction((currentData) => {
+                                estatisticasRef.child(hoje).transaction((currentData) => {
                                     if (currentData === null) {
                                         return { total: 1 };
-                                    } else {
-                                        currentData.total = (currentData.total || 0) + 1;
-                                        return currentData;
                                     }
+                                    currentData.total = (currentData.total || 0) + 1;
+                                    return currentData;
                                 });
                                 
                                 alert('Carregamento finalizado com sucesso!');
@@ -932,25 +935,25 @@
                 }
             });
             
+            // Cancelar operação
             document.getElementById('btnCancelar').addEventListener('click', function() {
                 document.getElementById('formContainer').style.display = 'none';
                 operacaoAtual = null;
                 stopQRScanner();
             });
             
-            // Eventos da aba de cadastro
+            // Cadastrar Funcionário
             document.getElementById('btnCadastrar').addEventListener('click', function() {
                 const id = document.getElementById('novoId').value.trim();
                 const nome = document.getElementById('novoNome').value.trim();
                 const cargo = document.getElementById('novoCargo').value.trim();
                 
-                if (!id || !nome) {
-                    alert('ID e Nome são obrigatórios!');
+                if (!id || !nome || !cargo) {
+                    alert('Por favor, preencha todos os campos!');
                     return;
                 }
                 
                 const funcionario = {
-                    id,
                     nome,
                     cargo
                 };
@@ -958,8 +961,12 @@
                 funcionariosRef.child(id).set(funcionario)
                     .then(() => {
                         alert('Funcionário cadastrado com sucesso!');
+                        document.getElementById('novoId').value = '';
+                        document.getElementById('novoNome').value = '';
+                        document.getElementById('novoCargo').value = '';
+                        
+                        // Gera o QR Code
                         generateQRCode(id, 'qrcode');
-                        document.getElementById('btnDownloadQR').style.display = 'block';
                     })
                     .catch(error => {
                         console.error('Erro ao cadastrar funcionário:', error);
@@ -967,47 +974,35 @@
                     });
             });
             
-            document.getElementById('btnDownloadQR').addEventListener('click', function() {
-                const canvas = document.querySelector('#qrcode canvas');
-                if (canvas) {
-                    const link = document.createElement('a');
-                    link.download = 'qrcode-funcionario.png';
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                }
-            });
-            
-            // Eventos da aba de busca
+            // Buscar Funcionário
             document.getElementById('btnBuscar').addEventListener('click', function() {
                 const id = document.getElementById('buscarFuncionario').value.trim();
-                if (id) {
-                    buscarFuncionario(id, true);
-                } else {
+                if (!id) {
                     alert('Por favor, informe o ID do funcionário!');
+                    return;
                 }
+                
+                buscarFuncionario(id, true);
             });
             
+            // Ler QR Code para busca
             document.getElementById('btnLerQR').addEventListener('click', function() {
                 document.getElementById('qrReaderContainer').style.display = 'block';
-                initQRScanner();
+                initQRScanner('qrReader');
             });
             
-            // Eventos da aba de histórico
+            // Filtro de histórico
             document.getElementById('btnFiltrar').addEventListener('click', function() {
                 atualizarHistorico();
             });
             
-            // Atualiza o histórico quando muda o mês ou ano
-            document.getElementById('filtroMes').addEventListener('change', atualizarHistorico);
-            document.getElementById('filtroAno').addEventListener('change', atualizarHistorico);
+            // Fecha o scanner quando muda de aba
+            document.querySelectorAll('.nav-link').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    stopQRScanner();
+                });
+            });
         });
-
-        // Função para formatar tempo (minutos) para HH:MM
-        function formatTime(minutes) {
-            const hours = Math.floor(minutes / 60);
-            const mins = Math.floor(minutes % 60);
-            return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
-        }
     </script>
 </body>
 </html>
