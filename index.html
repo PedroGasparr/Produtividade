@@ -6,63 +6,7 @@
     <title>Sistema de Carregamento de Caminhões</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        .time-normal { color: green; }
-        .time-warning { color: orange; font-weight: bold; }
-        .time-critical { color: red; font-weight: bold; }
-        .card-carregamento { transition: all 0.3s; }
-        .card-carregamento:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .dashboard-card { height: 100%; }
-        .codigo-funcionario {
-            font-family: monospace;
-            font-size: 1.2em;
-            letter-spacing: 1px;
-            color: #0d6efd;
-            font-weight: bold;
-        }
-        #qrCodeContainer {
-            text-align: center;
-            margin: 20px 0;
-        }
-        #qrCodeCanvas {
-            max-width: 200px;
-            margin: 0 auto;
-        }
-        #videoContainer {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        #video {
-            width: 100%;
-            border: 2px solid #0d6efd;
-            border-radius: 5px;
-        }
-        #scanOverlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-        }
-        #scanBox {
-            width: 70%;
-            height: 70%;
-            border: 4px dashed #0d6efd;
-            border-radius: 5px;
-        }
-        #btnCloseScanner {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
@@ -80,6 +24,9 @@
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button" role="tab">Dashboard</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="docas-tab" data-bs-toggle="tab" data-bs-target="#docas" type="button" role="tab">Docas</button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="historico-tab" data-bs-toggle="tab" data-bs-target="#historico" type="button" role="tab">Histórico</button>
@@ -115,18 +62,39 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title" id="formTitle">Informações do Carregamento</h5>
-                                <div class="mb-3">
-                                    <label for="funcionarioId" class="form-label">Código do Funcionário</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="funcionarioId" placeholder="Ex: GZL-EO-1234">
-                                        <button class="btn btn-outline-secondary" type="button" id="btnScanQRCode">
-                                            <i class="bi bi-camera"></i> Ler QR Code
-                                        </button>
+                                <div id="carregadoresContainer">
+                                    <div class="mb-3">
+                                        <label for="funcionarioId" class="form-label">Código do Funcionário</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control funcionario-input" placeholder="Ex: GZL-EO-1234">
+                                            <button class="btn btn-outline-secondary btn-scan" type="button">
+                                                <i class="bi bi-camera"></i> Ler QR Code
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
+                                <button id="btnAddCarregador" class="btn btn-outline-primary btn-sm add-carregador-btn">
+                                    <i class="bi bi-plus"></i> Adicionar outro carregador
+                                </button>
                                 <div class="mb-3">
-                                    <label for="placaCaminhao" class="form-label">Placa do Caminhão</label>
-                                    <input type="text" class="form-control" id="placaCaminhao" placeholder="Ex: ABC1234">
+                                    <label for="placaCaminhao" class="form-label">DT</label>
+                                    <input type="text" class="form-control" id="placaCaminhao" placeholder="Ex: 1234">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="docaNumero" class="form-label">Doca</label>
+                                    <select class="form-select" id="docaNumero">
+                                        <option value="1">Doca 1</option>
+                                        <option value="2">Doca 2</option>
+                                        <option value="3">Doca 3</option>
+                                        <option value="4">Doca 4</option>
+                                        <option value="5">Doca 5</option>
+                                        <option value="6">Doca 6</option>
+                                        <option value="7">Doca 7</option>
+                                        <option value="8">Doca 8</option>
+                                        <option value="9">Doca 9</option>
+                                        <option value="10">Doca 10</option>
+                                        <option value="11">Doca 11</option>
+                                    </select>
                                 </div>
                                 <button id="btnConfirmar" class="btn btn-primary">Confirmar</button>
                                 <button id="btnCancelar" class="btn btn-secondary">Cancelar</button>
@@ -243,6 +211,20 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            
+            <!-- ABA DOCAS -->
+            <div class="tab-pane fade" id="docas" role="tabpanel">
+                <div class="row">
+                    <div class="col-12">
+                        <h3>Status das Docas</h3>
+                        <p class="text-muted">Monitoramento em tempo real das docas de carregamento</p>
+                    </div>
+                </div>
+                
+                <div class="row mt-3" id="docasContainer">
+                    <!-- As docas serão preenchidas via JavaScript -->
                 </div>
             </div>
             
@@ -363,11 +345,12 @@
                                         <thead>
                                             <tr>
                                                 <th>Data</th>
-                                                <th>Placa</th>
+                                                <th>DT</th>
                                                 <th>Funcionário</th>
                                                 <th>Início</th>
                                                 <th>Fim</th>
                                                 <th>Tempo</th>
+                                                <th>Doca</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tabelaHistorico">
@@ -427,6 +410,7 @@
         const funcionariosRef = database.ref('funcionarios');
         const carregamentosRef = database.ref('carregamentos');
         const estatisticasRef = database.ref('estatisticas');
+        const docasRef = database.ref('docas');
         
         // Variáveis globais
         let operacaoAtual = null; // 'iniciar' ou 'finalizar'
@@ -434,6 +418,7 @@
         let intervalos = {};
         let scannerActive = false;
         let stream = null;
+        let currentScannerInput = null;
         
         // Gera um código único para o funcionário
         function gerarCodigoFuncionario() {
@@ -455,36 +440,44 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Adiciona logo ou título
+            // Configurações iniciais
             doc.setFontSize(20);
+            doc.setTextColor(40);
+            doc.setFont("helvetica", "bold");
             doc.text('Código do Funcionário', 105, 20, { align: 'center' });
             
-            // Adiciona informações
+            // Informações do funcionário
             doc.setFontSize(14);
+            doc.setFont("helvetica", "normal");
             doc.text('Nome:', 20, 40);
-            doc.text(nome, 40, 40);
+            doc.text(nome, 50, 40);
             
             doc.text('Cargo:', 20, 50);
-            doc.text(cargo, 40, 50);
+            doc.text(cargo, 50, 50);
             
             doc.text('Código:', 20, 70);
             doc.setFontSize(24);
+            doc.setFont("helvetica", "bold");
             doc.text(codigo, 50, 70);
             
-            // Gera QR code no PDF
-            const qrCodeData = `https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(codigo)}`;
-            doc.addImage(qrCodeData, 'PNG', 140, 60, 50, 50);
+            // Gera QR code e adiciona ao PDF
+            const canvas = document.getElementById('qrCodeCanvas');
+            const imgData = canvas.toDataURL('image/png');
+            doc.addImage(imgData, 'PNG', 140, 40, 50, 50);
             
-            // Adiciona data de emissão
+            // Data de emissão
             doc.setFontSize(10);
-            doc.text(`Emitido em: ${new Date().toLocaleDateString()}`, 20, 130);
+            doc.setFont("helvetica", "normal");
+            const hoje = new Date();
+            doc.text(`Emitido em: ${hoje.toLocaleDateString()}`, 20, 130);
             
             // Salva o PDF
             doc.save(`codigo-funcionario-${codigo}.pdf`);
         }
         
         // Inicia o scanner de QR code
-        function iniciarScanner() {
+        function iniciarScanner(inputElement) {
+            currentScannerInput = inputElement;
             const video = document.getElementById('video');
             const scanResult = document.getElementById('scanResult');
             
@@ -518,6 +511,7 @@
             }
             scannerActive = false;
             document.getElementById('scannerContainer').style.display = 'none';
+            currentScannerInput = null;
         }
         
         // Processa o vídeo para detectar QR codes
@@ -543,10 +537,8 @@
                     scanResult.style.display = 'block';
                     
                     // Preenche o campo do funcionário com o código lido
-                    if (operacaoAtual) {
-                        document.getElementById('funcionarioId').value = code.data;
-                    } else {
-                        document.getElementById('buscarFuncionario').value = code.data;
+                    if (currentScannerInput) {
+                        currentScannerInput.value = code.data;
                     }
                     
                     // Para o scanner após 1 segundo
@@ -608,9 +600,10 @@
                                     <thead>
                                         <tr>
                                             <th>Data</th>
-                                            <th>Placa</th>
+                                            <th>DT</th>
                                             <th>Tempo</th>
                                             <th>Status</th>
+                                            <th>Doca</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -623,6 +616,7 @@
                     const fim = carregamento.fim ? new Date(carregamento.fim).toLocaleString() : 'N/A';
                     const tempo = carregamento.fim ? `${((carregamento.fim - carregamento.inicio) / 60000).toFixed(2)} min` : 'Em andamento';
                     const status = carregamento.finalizado ? 'Finalizado' : 'Em andamento';
+                    const doca = carregamento.doca || 'N/A';
                     
                     html += `
                         <tr>
@@ -630,6 +624,7 @@
                             <td>${carregamento.placa || 'N/A'}</td>
                             <td>${tempo}</td>
                             <td>${status}</td>
+                            <td>${doca}</td>
                         </tr>
                     `;
                 });
@@ -686,11 +681,23 @@
                     if (tempoDecorrido > 90) tempoClass = 'time-critical';
                     else if (tempoDecorrido > 60) tempoClass = 'time-warning';
                     
+                    // Lista de carregadores
+                    let carregadoresHtml = '';
+                    if (carregamento.carregadores && carregamento.carregadores.length > 0) {
+                        carregadoresHtml = '<div class="mt-2"><strong>Carregadores:</strong><ul class="list-unstyled">';
+                        carregamento.carregadores.forEach(c => {
+                            carregadoresHtml += `<li>${c}</li>`;
+                        });
+                        carregadoresHtml += '</ul></div>';
+                    }
+                    
                     html += `
                         <div class="card card-carregamento em-andamento mb-2">
                             <div class="card-body">
-                                <h6 class="card-title">Placa: ${carregamento.placa || 'N/A'}</h6>
-                                <p class="card-text">Funcionário: ${carregamento.funcionarioId}</p>
+                                <h6 class="card-title">DT: ${carregamento.placa || 'N/A'}</h6>
+                                <p class="card-text">Doca: ${carregamento.doca || 'N/A'}</p>
+                                <p class="card-text">Principal: ${carregamento.funcionarioId}</p>
+                                ${carregadoresHtml}
                                 <p class="card-text ${tempoClass}">Tempo: ${tempoDecorrido} minutos</p>
                                 <p class="card-text">Início: ${new Date(carregamento.inicio).toLocaleTimeString()}</p>
                             </div>
@@ -717,395 +724,704 @@
                     dashboardHtml += `
                         <div class="card mb-3">
                             <div class="card-body">
-                                <h6 class="card-title">${carregamento.placa || 'N/A'}</h6>
-                                <p class="card-text">Funcionário: ${carregamento.funcionarioId}</p>
-                                <div class="progress">
-                                    <div class="progress-bar ${progressClass} progress-bar-striped progress-bar-animated" 
-                                         role="progressbar" style="width: ${porcentagem}%"></div>
+                                <h6>DT: ${carregamento.placa || 'N/A'}</h6>
+                                <p>Doca: ${carregamento.doca || 'N/A'}</p>
+                                <div class="progress progress-bar-tempo">
+                                    <div class="progress-bar ${progressClass}" 
+                                         role="progressbar" 
+                                         style="width: ${porcentagem}%" 
+                                         aria-valuenow="${porcentagem}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                    </div>
                                 </div>
-                                <p class="card-text mt-2">${tempoDecorrido} minutos (Início: ${new Date(carregamento.inicio).toLocaleTimeString()})</p>
+                                <small>Tempo: ${tempoDecorrido} minutos</small>
                             </div>
                         </div>
                     `;
                 });
-                
-                document.getElementById('dashboardCarregamentos').innerHTML = dashboardHtml || '<p>Nenhum carregamento em andamento no momento.</p>';
-            });
-            
-            // Atualiza estatísticas do dia
-            const hoje = new Date().toISOString().split('T')[0];
-            estatisticasRef.child(hoje).once('value', (snapshot) => {
-                const dados = snapshot.val() || { total: 0 };
-                document.getElementById('totalCarregamentosHoje').textContent = dados.total;
-            });
-            
-            // Atualiza funcionários em ação no dashboard
-            funcionariosRef.once('value', (snapshot) => {
-                const funcionarios = snapshot.val() || {};
-                let funcionariosHtml = '';
-                
-                Object.keys(funcionarios).forEach(id => {
-                    const funcionario = funcionarios[id];
-                    
-                    // Verifica se o funcionário tem carregamento em andamento
-                    const emAcao = Object.values(carregamentosEmAndamento).some(c => c.funcionarioId === id);
-                    
-                    if (emAcao) {
-                        funcionariosHtml += `
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                    <h6 class="card-title">${id} - ${funcionario.nome || 'Nome não informado'}</h6>
-                                    <p class="card-text">Cargo: ${funcionario.cargo || 'Não informado'}</p>
-                                    <span class="badge bg-success">Em carregamento</span>
-                                </div>
-                            </div>
-                        `;
+
+                document.getElementById('dashboardCarregamentos').innerHTML = dashboardHtml || '<p>Nenhum carregamento em andamento</p>';
+
+                // Atualiza estatísticas gerais
+                const totalCarregamentos = Object.keys(carregamentos).length;
+                document.getElementById('totalCarregamentosHoje').textContent = totalCarregamentos;
+
+                // Atualiza funcionários em ação
+                const funcionariosEmAcao = {};
+                Object.values(carregamentos).forEach(carregamento => {
+                    // Adiciona o funcionário principal
+                    if (!funcionariosEmAcao[carregamento.funcionarioId]) {
+                        funcionariosEmAcao[carregamento.funcionarioId] = {
+                            count: 0,
+                            nome: 'Não encontrado'
+                        };
+                    }
+                    funcionariosEmAcao[carregamento.funcionarioId].count++;
+
+                    // Adiciona os carregadores auxiliares
+                    if (carregamento.carregadores) {
+                        carregamento.carregadores.forEach(carregadorId => {
+                            if (!funcionariosEmAcao[carregadorId]) {
+                                funcionariosEmAcao[carregadorId] = {
+                                    count: 0,
+                                    nome: 'Não encontrado'
+                                };
+                            }
+                            funcionariosEmAcao[carregadorId].count++;
+                        });
                     }
                 });
-                
-                document.getElementById('dashboardFuncionarios').innerHTML = funcionariosHtml || '<p>Nenhum funcionário em ação no momento.</p>';
+
+                // Busca os nomes dos funcionários
+                const promises = Object.keys(funcionariosEmAcao).map(funcionarioId => {
+                    return buscarFuncionario(funcionarioId)
+                        .then(funcionario => {
+                            funcionariosEmAcao[funcionarioId].nome = funcionario.nome;
+                        })
+                        .catch(() => {
+                            // Mantém o nome padrão "Não encontrado" se falhar
+                        });
+                });
+
+                Promise.all(promises).then(() => {
+                    let funcionariosHtml = '';
+                    Object.entries(funcionariosEmAcao).forEach(([id, info]) => {
+                        funcionariosHtml += `
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>${info.nome}</strong>
+                                    <small class="text-muted d-block">${id}</small>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">${info.count} carreg.</span>
+                            </div>
+                        `;
+                    });
+
+                    document.getElementById('dashboardFuncionarios').innerHTML = 
+                        funcionariosHtml || '<p>Nenhum funcionário em ação no momento</p>';
+                });
+            });
+
+            // Atualiza status das docas
+            docasRef.on('value', (snapshot) => {
+                const docas = snapshot.val() || {};
+                let docasHtml = '';
+
+                for (let i = 1; i <= 11; i++) {
+                    const doca = docas[i] || { ocupada: false };
+                    const ocupadaClass = doca.ocupada ? 'doca-ocupada' : '';
+                    const statusText = doca.ocupada ? 'Ocupada 🚚💨' : 'Livre 🚛';
+                    const statusClass = doca.ocupada ? 'text-danger' : 'text-success';
+                    const placa = doca.ocupada ? (doca.placa || 'DT não informada') : '';
+                    const inicio = doca.ocupada && doca.inicio ? 
+                        new Date(doca.inicio).toLocaleTimeString() : '';
+
+                    // Busca o carregamento associado a esta doca
+                    let carregamentoHtml = '';
+                    if (doca.ocupada) {
+                        carregamentosRef.orderByChild('doca').equalTo(i.toString()).once('value', (carregamentoSnapshot) => {
+                            const carregamentos = carregamentoSnapshot.val() || {};
+                            const carregamento = Object.values(carregamentos).find(c => !c.finalizado);
+
+                            if (carregamento) {
+                                // Busca os nomes dos funcionários
+                                const promises = [];
+                                const funcionarios = [carregamento.funcionarioId, ...(carregamento.carregadores || [])];
+                                const nomes = [];
+                                
+                                funcionarios.forEach(funcionarioId => {
+                                    promises.push(
+                                        buscarFuncionario(funcionarioId)
+                                            .then(funcionario => {
+                                                nomes.push(funcionario.nome || funcionarioId);
+                                            })
+                                            .catch(() => {
+                                                nomes.push(funcionarioId);
+                                            })
+                                    );
+                                });
+
+                                Promise.all(promises).then(() => {
+                                    const docaElement = document.querySelector(`.doca-${i} .carregadores-nomes`);
+                                    if (docaElement) {
+                                        docaElement.innerHTML = nomes.join('<br>');
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    docasHtml += `
+                        <div class="col-md-4">
+                            <div class="doca-container ${ocupadaClass} doca-${i}">
+                                <div class="doca-header">Doca ${i}</div>
+                                <p><strong>Status:</strong> <span class="${statusClass}">${statusText}</span></p>
+                                ${doca.ocupada ? `
+                                    <p><strong>DT:</strong> ${placa}</p>
+                                    <p><strong>Início:</strong> ${inicio}</p>
+                                    <p><strong>Tempo:</strong> ${Math.floor((new Date().getTime() - doca.inicio) / 60000)} min</p>
+                                    <p><strong>Carregadores:</strong></p>
+                                    <div class="carregadores-nomes">Carregando nomes...</div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                document.getElementById('docasContainer').innerHTML = docasHtml;
             });
         }
-        
-        // Atualiza o histórico com filtros
-        function atualizarHistorico() {
-            const mes = document.getElementById('filtroMes').value;
-            const ano = document.getElementById('filtroAno').value;
-            const funcionarioId = document.getElementById('filtroFuncionario').value.trim();
+
+        // Atualiza o histórico
+        function atualizarHistorico(mes, ano, funcionarioId = null) {
+            const startDate = new Date(ano, mes - 1, 1).getTime();
+            const endDate = new Date(ano, mes, 0, 23, 59, 59).getTime();
             
-            // Cria uma data de início e fim para o mês selecionado
-            const dataInicio = new Date(`${ano}-${mes}-01`);
-            const dataFim = new Date(dataInicio);
-            dataFim.setMonth(dataFim.getMonth() + 1);
+            let query = carregamentosRef.orderByChild('inicio').startAt(startDate).endAt(endDate);
             
-            // Consulta os carregamentos finalizados no período
-            carregamentosRef.orderByChild('fim').startAt(dataInicio.getTime()).endAt(dataFim.getTime()).once('value', (snapshot) => {
+            if (funcionarioId) {
+                query = query.orderByChild('funcionarioId').equalTo(funcionarioId);
+            }
+            
+            // Altere para on() em vez de once() para atualização em tempo real
+            query.on('value', (snapshot) => {
                 const carregamentos = snapshot.val() || {};
-                let carregamentosArray = Object.values(carregamentos).filter(c => c.finalizado);
+                const carregamentosArray = Object.values(carregamentos).filter(c => c.finalizado);
                 
-                // Filtra por funcionário se especificado
-                if (funcionarioId) {
-                    carregamentosArray = carregamentosArray.filter(c => c.funcionarioId === funcionarioId);
+                // Ordena por data decrescente
+                carregamentosArray.sort((a, b) => b.inicio - a.inicio);
+                
+                // Atualiza estatísticas
+                atualizarEstatisticasHistorico(carregamentosArray);
+                
+                // Preenche a tabela de histórico
+                preencherTabelaHistorico(carregamentosArray);
+                
+                // Atualiza top funcionários (apenas quando não filtrar por funcionário específico)
+                if (!funcionarioId) {
+                    atualizarTopFuncionarios(carregamentosArray);
                 }
-                
-                // Ordena por data de fim (mais recente primeiro)
-                carregamentosArray.sort((a, b) => b.fim - a.fim);
-                
-                // Atualiza a tabela de histórico
-                let tabelaHtml = '';
-                carregamentosArray.forEach(carregamento => {
-                    const inicio = new Date(carregamento.inicio);
-                    const fim = new Date(carregamento.fim);
-                    const tempo = ((fim - inicio) / 60000).toFixed(2);
+            });
+        }
+
+function atualizarEstatisticasHistorico(carregamentosArray) {
+    const totalCaminhoes = carregamentosArray.length;
+    const tempoTotal = carregamentosArray.reduce((sum, c) => sum + (c.fim - c.inicio), 0);
+    const mediaTempo = totalCaminhoes > 0 ? (tempoTotal / totalCaminhoes / 60000).toFixed(2) : 0;
+    
+    // Calcula o total de colaboradores (1 por funcionário principal + carregadores auxiliares)
+    const totalColaboradores = carregamentosArray.reduce((sum, c) => {
+        return sum + 1 + (c.carregadores ? c.carregadores.length : 0);
+    }, 0);
+    
+    const valorPorColaborador = 2.50; // Valor por pessoa
+    const valorTotal = (totalColaboradores * valorPorColaborador).toFixed(2);
+    
+    document.getElementById('totalCaminhoes').textContent = totalCaminhoes;
+    document.getElementById('mediaTempo').textContent = `${mediaTempo} min`;
+    document.getElementById('valorTotal').textContent = `R$ ${valorTotal}`;
+}
+
+// E atualize a função atualizarTopFuncionarios para usar a mesma lógica:
+function atualizarTopFuncionarios(carregamentos) {
+    const funcionariosStats = {};
+    
+    carregamentos.forEach(carregamento => {
+        // Contabiliza funcionário principal (1 carregamento)
+        if (!funcionariosStats[carregamento.funcionarioId]) {
+            funcionariosStats[carregamento.funcionarioId] = {
+                count: 0,
+                tempoTotal: 0,
+                nome: 'Não encontrado',
+                valor: 0
+            };
+        }
+        funcionariosStats[carregamento.funcionarioId].count++;
+        funcionariosStats[carregamento.funcionarioId].tempoTotal += 
+            (carregamento.fim - carregamento.inicio);
+        funcionariosStats[carregamento.funcionarioId].valor += 2.50;
+        
+        // Contabiliza carregadores auxiliares (1 carregamento cada)
+        if (carregamento.carregadores) {
+            carregamento.carregadores.forEach(carregadorId => {
+                if (!funcionariosStats[carregadorId]) {
+                    funcionariosStats[carregadorId] = {
+                        count: 0,
+                        tempoTotal: 0,
+                        nome: 'Não encontrado',
+                        valor: 0
+                    };
+                }
+                funcionariosStats[carregadorId].count++;
+                funcionariosStats[carregadorId].tempoTotal += 
+                    (carregamento.fim - carregamento.inicio);
+                funcionariosStats[carregadorId].valor += 2.50;
+            });
+        }
+    });
+    
+    // Busca os nomes dos funcionários
+    const promises = Object.keys(funcionariosStats).map(funcionarioId => {
+        return buscarFuncionario(funcionarioId)
+            .then(funcionario => {
+                funcionariosStats[funcionarioId].nome = funcionario.nome;
+            })
+            .catch(() => {
+                // Mantém o nome padrão se falhar
+            });
+    });
+    
+    Promise.all(promises).then(() => {
+        // Converte para array e ordena
+        const ranking = Object.entries(funcionariosStats)
+            .map(([id, stats]) => ({
+                id,
+                nome: stats.nome,
+                count: stats.count,
+                tempoMedio: stats.count > 0 ? (stats.tempoTotal / stats.count / 60000).toFixed(2) : 0,
+                valor: stats.valor.toFixed(2)
+            }))
+            .sort((a, b) => b.count - a.count);
+        
+        // Preenche a tabela de ranking
+        let topFuncionariosHtml = '';
+        ranking.slice(0, 10).forEach((func, index) => {
+            topFuncionariosHtml += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${func.nome} <small class="text-muted">${func.id}</small></td>
+                    <td>${func.count}</td>
+                    <td>${func.tempoMedio} min</td>
+                    <td>R$ ${func.valor}</td>
+                </tr>
+            `;
+        });
+        
+        document.getElementById('topFuncionarios').innerHTML = topFuncionariosHtml;
+    });
+}
+
+        // Função auxiliar para preencher a tabela
+        function preencherTabelaHistorico(carregamentosArray) {
+            let historicoHtml = '';
+            
+            // Busca todos os funcionários primeiro para otimizar
+            const funcionariosPromises = carregamentosArray.map(c => buscarFuncionario(c.funcionarioId).catch(() => null));
+            
+            Promise.all(funcionariosPromises).then(funcionarios => {
+                carregamentosArray.forEach((carregamento, index) => {
+                    const funcionario = funcionarios[index];
+                    const nomeFuncionario = funcionario ? funcionario.nome : carregamento.funcionarioId;
                     
-                    tabelaHtml += `
+                    const inicio = new Date(carregamento.inicio);
+                    const fim = carregamento.fim ? new Date(carregamento.fim) : null;
+                    const tempo = fim ? `${((fim - inicio) / 60000).toFixed(2)} min` : 'N/A';
+                    
+                    historicoHtml += `
                         <tr>
                             <td>${inicio.toLocaleDateString()}</td>
                             <td>${carregamento.placa || 'N/A'}</td>
-                            <td>${carregamento.funcionarioId}</td>
+                            <td>${nomeFuncionario}</td>
                             <td>${inicio.toLocaleTimeString()}</td>
-                            <td>${fim.toLocaleTimeString()}</td>
-                            <td>${tempo} min</td>
+                            <td>${fim ? fim.toLocaleTimeString() : 'N/A'}</td>
+                            <td>${tempo}</td>
+                            <td>${carregamento.doca || 'N/A'}</td>
                         </tr>
                     `;
                 });
                 
-                document.getElementById('tabelaHistorico').innerHTML = tabelaHtml || '<tr><td colspan="6">Nenhum carregamento encontrado no período.</td></tr>';
-                
-                // Calcula estatísticas
-                const totalCaminhoes = carregamentosArray.length;
-                const valorTotal = totalCaminhoes * 2.5;
-                
-                let tempoTotal = 0;
-                carregamentosArray.forEach(c => {
-                    tempoTotal += (c.fim - c.inicio) / 60000;
-                });
-                
-                const mediaTempo = totalCaminhoes > 0 ? (tempoTotal / totalCaminhoes).toFixed(2) : 0;
-                
-                // Atualiza os cards de estatísticas
-                document.getElementById('totalCaminhoes').textContent = totalCaminhoes;
-                document.getElementById('mediaTempo').textContent = `${mediaTempo} min`;
-                document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toFixed(2)}`;
-                
-                // Calcula os top funcionários
-                const funcionariosMap = {};
-                carregamentosArray.forEach(c => {
-                    if (!funcionariosMap[c.funcionarioId]) {
-                        funcionariosMap[c.funcionarioId] = {
-                            count: 0,
-                            tempoTotal: 0,
-                            nome: 'Desconhecido'
-                        };
-                    }
-                    
-                    funcionariosMap[c.funcionarioId].count++;
-                    funcionariosMap[c.funcionarioId].tempoTotal += (c.fim - c.inicio) / 60000;
-                });
-                
-                // Busca os nomes dos funcionários
-                const promises = Object.keys(funcionariosMap).map(id => {
-                    return funcionariosRef.child(id).once('value').then(snap => {
-                        if (snap.exists()) {
-                            funcionariosMap[id].nome = snap.val().nome || 'Desconhecido';
-                        }
-                    });
-                });
-                
-                Promise.all(promises).then(() => {
-                    // Converte o mapa para array e ordena
-                    const topFuncionarios = Object.keys(funcionariosMap).map(id => {
-                        return {
-                            id,
-                            nome: funcionariosMap[id].nome,
-                            count: funcionariosMap[id].count,
-                            tempoMedio: (funcionariosMap[id].tempoTotal / funcionariosMap[id].count).toFixed(2),
-                            valor: funcionariosMap[id].count * 2.5
-                        };
-                    }).sort((a, b) => b.count - a.count);
-                    
-                    // Atualiza a tabela de top funcionários
-                    let topHtml = '';
-                    topFuncionarios.forEach((func, index) => {
-                        topHtml += `
-                            <tr>
-                                <td>${index + 1}</td>
-                                <td>${func.nome} (${func.id})</td>
-                                <td>${func.count}</td>
-                                <td>${func.tempoMedio} min</td>
-                                <td>R$ ${func.valor.toFixed(2)}</td>
-                            </tr>
-                        `;
-                    });
-                    
-                    document.getElementById('topFuncionarios').innerHTML = topHtml || '<tr><td colspan="5">Nenhum dado disponível</td></tr>';
-                });
+                document.getElementById('tabelaHistorico').innerHTML = 
+                    historicoHtml || '<tr><td colspan="7">Nenhum registro encontrado</td></tr>';
             });
         }
 
+        // No evento DOMContentLoaded, altere a inicialização para:
+        document.addEventListener('DOMContentLoaded', function() {
+            // ... outros códigos ...
+            
+            // Configura o filtro do histórico para o mês/ano atual
+            const hoje = new Date();
+            const mesAtual = (hoje.getMonth() + 1).toString().padStart(2, '0');
+            const anoAtual = hoje.getFullYear().toString();
+            
+            document.getElementById('filtroMes').value = mesAtual;
+            document.getElementById('filtroAno').value = anoAtual;
+            
+            // Inicia a escuta em tempo real
+            atualizarHistorico(parseInt(mesAtual), parseInt(anoAtual));
+            
+            // Atualiza quando os filtros mudarem
+            document.getElementById('btnFiltrar').addEventListener('click', function() {
+                const mes = parseInt(document.getElementById('filtroMes').value);
+                const ano = parseInt(document.getElementById('filtroAno').value);
+                const funcionarioId = document.getElementById('filtroFuncionario').value.trim() || null;
+                
+                // Remove o listener anterior para evitar múltiplas escutas
+                carregamentosRef.off('value');
+                
+                // Atualiza com os novos filtros
+                atualizarHistorico(mes, ano, funcionarioId);
+            });
+            
+
+        });
+
+        // Atualiza o ranking de funcionários
+        function atualizarTopFuncionarios(carregamentos) {
+            const funcionariosStats = {};
+            
+            carregamentos.forEach(carregamento => {
+                // Contabiliza funcionário principal
+                if (!funcionariosStats[carregamento.funcionarioId]) {
+                    funcionariosStats[carregamento.funcionarioId] = {
+                        count: 0,
+                        tempoTotal: 0,
+                        nome: 'Não encontrado'
+                    };
+                }
+                funcionariosStats[carregamento.funcionarioId].count++;
+                funcionariosStats[carregamento.funcionarioId].tempoTotal += 
+                    (carregamento.fim - carregamento.inicio);
+                
+                // Contabiliza carregadores auxiliares
+                if (carregamento.carregadores) {
+                    carregamento.carregadores.forEach(carregadorId => {
+                        if (!funcionariosStats[carregadorId]) {
+                            funcionariosStats[carregadorId] = {
+                                count: 0,
+                                tempoTotal: 0,
+                                nome: 'Não encontrado'
+                            };
+                        }
+                        funcionariosStats[carregadorId].count++;
+                        funcionariosStats[carregadorId].tempoTotal += 
+                            (carregamento.fim - carregamento.inicio);
+                    });
+                }
+            });
+            
+            // Busca os nomes dos funcionários
+            const promises = Object.keys(funcionariosStats).map(funcionarioId => {
+                return buscarFuncionario(funcionarioId)
+                    .then(funcionario => {
+                        funcionariosStats[funcionarioId].nome = funcionario.nome;
+                    })
+                    .catch(() => {
+                        // Mantém o nome padrão se falhar
+                    });
+            });
+            
+            Promise.all(promises).then(() => {
+                // Converte para array e ordena
+                const ranking = Object.entries(funcionariosStats)
+                    .map(([id, stats]) => ({
+                        id,
+                        nome: stats.nome,
+                        count: stats.count,
+                        tempoMedio: stats.count > 0 ? (stats.tempoTotal / stats.count / 60000).toFixed(2) : 0
+                    }))
+                    .sort((a, b) => b.count - a.count);
+                
+                // Preenche a tabela de ranking
+                let topFuncionariosHtml = '';
+                ranking.slice(0, 10).forEach((func, index) => {
+                    topFuncionariosHtml += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${func.nome} <small class="text-muted">${func.id}</small></td>
+                            <td>${func.count}</td>
+                            <td>${func.tempoMedio} min</td>
+                            <td>R$ ${(func.count * 2.5).toFixed(2)}</td> <!-- Exemplo: R$25 por carregamento -->
+                        </tr>
+                    `;
+                });
+                
+                document.getElementById('topFuncionarios').innerHTML = topFuncionariosHtml;
+            });
+        }
+
+        // Inicia um novo carregamento
+        function iniciarCarregamento() {
+    // Pega o primeiro input de funcionário como principal
+    const funcionarioInputs = document.querySelectorAll('.funcionario-input');
+    const funcionarioId = funcionarioInputs[0].value.trim();
+    const placa = document.getElementById('placaCaminhao').value.trim().toUpperCase();
+    const doca = document.getElementById('docaNumero').value;
+    
+    if (!funcionarioId || !placa || !doca) {
+        alert('Preencha todos os campos obrigatórios!');
+        return;
+    }
+    
+    // Verifica se o funcionário existe
+    buscarFuncionario(funcionarioId)
+        .then(() => {
+            // Verifica se a doca está disponível
+            docasRef.child(doca).once('value', (snapshot) => {
+                const docaStatus = snapshot.val();
+                
+                if (docaStatus && docaStatus.ocupada) {
+                    alert(`Doca ${doca} já está ocupada!`);
+                    return;
+                }
+                
+                // Obtém todos os carregadores (todos os inputs exceto o primeiro)
+                const carregadores = Array.from(funcionarioInputs)
+                    .slice(1) // Pula o primeiro que é o principal
+                    .map(input => input.value.trim())
+                    .filter(id => id && id !== funcionarioId);
+                
+                // Cria o objeto de carregamento
+                const carregamento = {
+                    funcionarioId,
+                    carregadores,
+                    placa,
+                    doca,
+                    inicio: new Date().getTime(),
+                    finalizado: false
+                };
+                
+                // Salva no Firebase
+                const newKey = carregamentosRef.push().key;
+                carregamentosRef.child(newKey).set(carregamento);
+                
+                // Atualiza status da doca
+                docasRef.child(doca).set({
+                    ocupada: true,
+                    placa,
+                    inicio: carregamento.inicio
+                });
+                
+                // Limpa o formulário
+                document.getElementById('formContainer').style.display = 'none';
+                funcionarioInputs.forEach(input => input.value = '');
+                document.getElementById('placaCaminhao').value = '';
+                
+                alert('Carregamento iniciado com sucesso!');
+            });
+        })
+        .catch(() => {
+            alert('Funcionário não encontrado! Verifique o código.');
+        });
+}
+
+        // Finaliza um carregamento
+        // Finaliza um carregamento
+function finalizarCarregamento() {
+    const funcionarioInputs = document.querySelectorAll('.funcionario-input');
+    const funcionarioId = funcionarioInputs[0].value.trim();
+    
+    if (!funcionarioId) {
+        alert('Informe o código do funcionário!');
+        return;
+    }
+    
+    // Busca carregamento em andamento
+    carregamentosRef.orderByChild('funcionarioId').equalTo(funcionarioId)
+        .once('value', (snapshot) => {
+            const carregamentos = snapshot.val() || {};
+            let carregamentoEmAndamento = Object.entries(carregamentos)
+                .find(([key, c]) => c.inicio && !c.finalizado);
+            
+            // Se não encontrou pelo funcionário principal, verifica nos carregadores auxiliares
+            if (!carregamentoEmAndamento) {
+                carregamentosRef.orderByChild('finalizado').equalTo(false)
+                    .once('value', (snapshot) => {
+                        const todosCarregamentos = snapshot.val() || {};
+                        carregamentoEmAndamento = Object.entries(todosCarregamentos)
+                            .find(([key, c]) => 
+                                c.carregadores && 
+                                c.carregadores.includes(funcionarioId)
+                            );
+                            
+                        if (carregamentoEmAndamento) {
+                            finalizarCarregamentoFirebase(...carregamentoEmAndamento);
+                        } else {
+                            alert('Nenhum carregamento em andamento encontrado para este funcionário!');
+                        }
+                    });
+            } else {
+                finalizarCarregamentoFirebase(...carregamentoEmAndamento);
+            }
+        });
+}
+
+// Função auxiliar para finalizar no Firebase
+function finalizarCarregamentoFirebase(key, carregamento) {
+    // Atualiza o carregamento
+    const updates = {
+        fim: new Date().getTime(),
+        finalizado: true
+    };
+    
+    carregamentosRef.child(key).update(updates);
+    
+    // Libera a doca
+    docasRef.child(carregamento.doca).update({
+        ocupada: false,
+        placa: '',
+        inicio: null
+    });
+    
+    // Limpa o formulário
+    document.getElementById('formContainer').style.display = 'none';
+    document.querySelectorAll('.funcionario-input').forEach(input => input.value = '');
+    
+    alert('Carregamento finalizado com sucesso!');
+}
         // Event Listeners
         document.addEventListener('DOMContentLoaded', function() {
             // Inicializa o dashboard
             atualizarDashboard();
             
-            // Atualiza o dashboard a cada minuto
-            setInterval(atualizarDashboard, 60000);
-            
-            // Carrega o histórico com os valores atuais
+            // Configura o filtro do histórico para o mês/ano atual
             const hoje = new Date();
             document.getElementById('filtroMes').value = (hoje.getMonth() + 1).toString().padStart(2, '0');
             document.getElementById('filtroAno').value = hoje.getFullYear().toString();
-            atualizarHistorico();
+            atualizarHistorico(hoje.getMonth() + 1, hoje.getFullYear());
             
-            // Operação: Iniciar Carregamento
+            // Botão Iniciar Carregamento
             document.getElementById('btnIniciarCarregamento').addEventListener('click', function() {
                 operacaoAtual = 'iniciar';
-                document.getElementById('formTitle').textContent = 'Iniciar Carregamento';
                 document.getElementById('formContainer').style.display = 'block';
-                document.getElementById('placaCaminhao').value = '';
-                document.getElementById('funcionarioId').value = '';
-                document.getElementById('funcionarioId').focus();
+                document.getElementById('formTitle').textContent = 'Iniciar Carregamento';
+                document.getElementById('btnConfirmar').textContent = 'Iniciar';
             });
             
-            // Operação: Finalizar Carregamento
+            // Botão Finalizar Carregamento
             document.getElementById('btnFinalizarCarregamento').addEventListener('click', function() {
                 operacaoAtual = 'finalizar';
-                document.getElementById('formTitle').textContent = 'Finalizar Carregamento';
                 document.getElementById('formContainer').style.display = 'block';
-                document.getElementById('placaCaminhao').value = '';
-                document.getElementById('funcionarioId').value = '';
-                document.getElementById('funcionarioId').focus();
+                document.getElementById('formTitle').textContent = 'Finalizar Carregamento';
+                document.getElementById('btnConfirmar').textContent = 'Finalizar';
+                
+                // Esconde campos não necessários para finalização
+                document.getElementById('placaCaminhao').closest('.mb-3').style.display = 'none';
+                document.getElementById('docaNumero').closest('.mb-3').style.display = 'none';
+                document.getElementById('btnAddCarregador').style.display = 'none';
             });
             
-            // Botão para ler QR Code na operação
-            document.getElementById('btnScanQRCode').addEventListener('click', iniciarScanner);
-            
-            // Botão para ler QR Code na busca
-            document.getElementById('btnBuscarQRCode').addEventListener('click', iniciarScanner);
-            
-            // Botão para fechar o scanner
-            document.getElementById('btnCloseScanner').addEventListener('click', pararScanner);
-            
-            // Confirmar operação
+            // Botão Confirmar (Iniciar/Finalizar)
             document.getElementById('btnConfirmar').addEventListener('click', function() {
-                const funcionarioId = document.getElementById('funcionarioId').value.trim();
-                const placa = document.getElementById('placaCaminhao').value.trim().toUpperCase();
-                
-                if (!funcionarioId) {
-                    alert('Por favor, informe o código do funcionário!');
-                    return;
-                }
-                
-                if (!funcionarioId.startsWith('GZL-EO-')) {
-                    alert('Código de funcionário inválido! Deve começar com GZL-EO-');
-                    return;
-                }
-                
-                if (!placa) {
-                    alert('Por favor, informe a placa do caminhão!');
-                    return;
-                }
-                
                 if (operacaoAtual === 'iniciar') {
-                    // Verifica se o funcionário já tem um carregamento em andamento
-                    carregamentosRef.orderByChild('funcionarioId').equalTo(funcionarioId).once('value', (snapshot) => {
-                        const carregamentos = snapshot.val() || {};
-                        const carregamentoEmAndamento = Object.values(carregamentos).find(c => c.inicio && !c.finalizado);
-                        
-                        if (carregamentoEmAndamento) {
-                            alert('Este funcionário já tem um carregamento em andamento!');
-                            return;
-                        }
-                        
-                        // Verifica se o funcionário existe
-                        funcionariosRef.child(funcionarioId).once('value', (snap) => {
-                            if (!snap.exists()) {
-                                alert('Funcionário não encontrado! Verifique o código.');
-                                return;
-                            }
-                            
-                            // Cria novo carregamento
-                            const novoCarregamento = {
-                                funcionarioId,
-                                placa,
-                                inicio: new Date().getTime(),
-                                finalizado: false
-                            };
-                            
-                            const novoRef = carregamentosRef.push();
-                            novoRef.set(novoCarregamento)
-                                .then(() => {
-                                    alert('Carregamento iniciado com sucesso!');
-                                    document.getElementById('formContainer').style.display = 'none';
-                                    operacaoAtual = null;
-                                    atualizarDashboard();
-                                })
-                                .catch(error => {
-                                    console.error('Erro ao iniciar carregamento:', error);
-                                    alert('Erro ao iniciar carregamento!');
-                                });
-                        });
-                    });
+                    iniciarCarregamento();
                 } else if (operacaoAtual === 'finalizar') {
-                    // Finaliza o carregamento
-                    carregamentosRef.orderByChild('funcionarioId').equalTo(funcionarioId).once('value', (snapshot) => {
-                        const carregamentos = snapshot.val() || {};
-                        const carregamentoEmAndamento = Object.entries(carregamentos).find(([key, c]) => c.inicio && !c.finalizado);
-                        
-                        if (!carregamentoEmAndamento) {
-                            alert('Nenhum carregamento em andamento encontrado para este funcionário!');
-                            return;
-                        }
-                        
-                        const [key, carregamento] = carregamentoEmAndamento;
-                        
-                        // Atualiza o carregamento
-                        const updates = {
-                            fim: new Date().getTime(),
-                            finalizado: true,
-                            placa: placa || carregamento.placa
-                        };
-                        
-                        carregamentosRef.child(key).update(updates)
-                            .then(() => {
-                                // Atualiza estatísticas do dia
-                                const hoje = new Date().toISOString().split('T')[0];
-                                estatisticasRef.child(hoje).transaction((currentData) => {
-                                    if (currentData === null) {
-                                        return { total: 1 };
-                                    }
-                                    currentData.total = (currentData.total || 0) + 1;
-                                    return currentData;
-                                });
-                                
-                                alert('Carregamento finalizado com sucesso!');
-                                document.getElementById('formContainer').style.display = 'none';
-                                operacaoAtual = null;
-                                atualizarDashboard();
-                                atualizarHistorico();
-                            })
-                            .catch(error => {
-                                console.error('Erro ao finalizar carregamento:', error);
-                                alert('Erro ao finalizar carregamento!');
-                            });
-                    });
+                    finalizarCarregamento();
                 }
             });
             
-            // Cancelar operação
+            // Botão Cancelar
             document.getElementById('btnCancelar').addEventListener('click', function() {
                 document.getElementById('formContainer').style.display = 'none';
-                operacaoAtual = null;
+                document.getElementById('placaCaminhao').closest('.mb-3').style.display = 'block';
+                document.getElementById('docaNumero').closest('.mb-3').style.display = 'block';
+                document.getElementById('btnAddCarregador').style.display = 'block';
             });
             
-            // Cadastrar Funcionário
+            // Botão Adicionar Carregador
+            document.getElementById('btnAddCarregador').addEventListener('click', function() {
+                const container = document.getElementById('carregadoresContainer');
+                const newInput = document.createElement('div');
+                newInput.className = 'mb-3';
+                newInput.innerHTML = `
+                    <label class="form-label">Código do Carregador Adicional</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control funcionario-input" placeholder="Ex: GZL-EO-1234">
+                        <button class="btn btn-outline-secondary btn-scan" type="button">
+                            <i class="bi bi-camera"></i> Ler QR Code
+                        </button>
+                    </div>
+                `;
+                container.appendChild(newInput);
+                
+                // Adiciona evento ao novo botão de scan
+                newInput.querySelector('.btn-scan').addEventListener('click', function() {
+                    iniciarScanner(newInput.querySelector('.funcionario-input'));
+                });
+            });
+            
+            // Botões de scan existentes
+            document.querySelectorAll('.btn-scan').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const input = this.closest('.input-group').querySelector('.funcionario-input');
+                    iniciarScanner(input);
+                });
+            });
+            
+            // Fechar scanner
+            document.getElementById('btnCloseScanner').addEventListener('click', pararScanner);
+            
+            // Cadastrar funcionário
             document.getElementById('btnCadastrar').addEventListener('click', function() {
                 const nome = document.getElementById('novoNome').value.trim();
                 const cargo = document.getElementById('novoCargo').value.trim();
                 
                 if (!nome || !cargo) {
-                    alert('Por favor, preencha todos os campos!');
+                    alert('Preencha todos os campos!');
                     return;
                 }
                 
                 const codigo = gerarCodigoFuncionario();
-                const funcionario = {
+                document.getElementById('codigoGerado').textContent = codigo;
+                document.getElementById('codigoGerado').style.display = 'block';
+                
+                // Gera QR code
+                gerarQRCode(codigo);
+                document.getElementById('qrCodeContainer').style.display = 'block';
+                
+                // Mostra informações
+                document.getElementById('infoCadastro').innerHTML = `
+                    <div class="alert alert-success mt-3">
+                        <strong>Funcionário cadastrado com sucesso!</strong><br>
+                        Nome: ${nome}<br>
+                        Cargo: ${cargo}
+                    </div>
+                `;
+                
+                // Mostra botão para download do PDF
+                document.getElementById('btnDownloadPDF').style.display = 'block';
+                
+                // Salva no Firebase
+                funcionariosRef.child(codigo).set({
                     nome,
                     cargo,
                     dataCadastro: new Date().getTime()
-                };
-                
-                funcionariosRef.child(codigo).set(funcionario)
-                    .then(() => {
-                        // Mostra o código gerado
-                        document.getElementById('codigoGerado').textContent = codigo;
-                        document.getElementById('codigoGerado').style.display = 'block';
-                        
-                        // Mostra e gera o QR code
-                        document.getElementById('qrCodeContainer').style.display = 'block';
-                        gerarQRCode(codigo);
-                        
-                        document.getElementById('infoCadastro').innerHTML = `
-                            <p><strong>Nome:</strong> ${nome}</p>
-                            <p><strong>Cargo:</strong> ${cargo}</p>
-                            <p><strong>Data de Cadastro:</strong> ${new Date().toLocaleDateString()}</p>
-                        `;
-                        
-                        // Habilita o botão de download
-                        document.getElementById('btnDownloadPDF').style.display = 'block';
-                        document.getElementById('btnDownloadPDF').onclick = function() {
-                            gerarPDFCodigo(codigo, nome, cargo);
-                        };
-                        
-                        // Limpa os campos
-                        document.getElementById('novoNome').value = '';
-                        document.getElementById('novoCargo').value = '';
-                    })
-                    .catch(error => {
-                        console.error('Erro ao cadastrar funcionário:', error);
-                        alert('Erro ao cadastrar funcionário!');
-                    });
+                });
             });
             
-            // Buscar Funcionário
+            // Download PDF
+            document.getElementById('btnDownloadPDF').addEventListener('click', function() {
+                const codigo = document.getElementById('codigoGerado').textContent;
+                const nome = document.getElementById('novoNome').value.trim();
+                const cargo = document.getElementById('novoCargo').value.trim();
+                gerarPDFCodigo(codigo, nome, cargo);
+            });
+            
+            // Buscar funcionário
             document.getElementById('btnBuscar').addEventListener('click', function() {
                 const codigo = document.getElementById('buscarFuncionario').value.trim();
                 if (!codigo) {
-                    alert('Por favor, informe o código do funcionário!');
-                    return;
-                }
-                
-                if (!codigo.startsWith('GZL-EO-')) {
-                    alert('Código de funcionário inválido! Deve começar com GZL-EO-');
+                    alert('Informe o código do funcionário!');
                     return;
                 }
                 
                 buscarFuncionario(codigo, true);
             });
             
-            // Filtro de histórico
+            // Botão de scan na busca
+            document.getElementById('btnBuscarQRCode').addEventListener('click', function() {
+                const input = document.getElementById('buscarFuncionario');
+                iniciarScanner(input);
+            });
+            
+            // Filtrar histórico
             document.getElementById('btnFiltrar').addEventListener('click', function() {
-                atualizarHistorico();
+                const mes = parseInt(document.getElementById('filtroMes').value);
+                const ano = parseInt(document.getElementById('filtroAno').value);
+                const funcionarioId = document.getElementById('filtroFuncionario').value.trim() || null;
+                
+                atualizarHistorico(mes, ano, funcionarioId);
             });
         });
     </script>
