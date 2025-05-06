@@ -522,7 +522,7 @@
             auth.signInWithEmailAndPassword(email, senha)
                 .then((userCredential) => {
                     // Login bem-sucedido, redireciona para a página de destino
-                    window.location.href = "/pages/prod.html"; // Substitua "prod.html" pela sua URL real
+                    window.location.href = "prod.html"; // Substitua "prod.html" pela sua URL real
                 })
                 .catch((error) => {
                     let errorMessage = error.message;
@@ -601,7 +601,7 @@
 
                          // Redireciona após um pequeno atraso para o usuário ver a mensagem
                          setTimeout(() => {
-                             window.location.href = "/pages/prod.html"; // Substitua "prod.html" pela sua URL real
+                             window.location.href = "prod.html"; // Substitua "prod.html" pela sua URL real
                          }, 1500); // Redireciona após 1.5 segundos
                     });
                 })
