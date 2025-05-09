@@ -6,36 +6,253 @@
     <title>Sistema de Carregamento de Caminhões</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Verifique se o caminho para seu style.css está correto -->
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* Adicione ou ajuste estilos conforme necessário */
+        .codigo-funcionario {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .time-normal { color: green; }
+        .time-warning { color: orange; }
+        .time-critical { color: red; }
+        .progress-bar-tempo { height: 10px; }
+        .doca-container {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .doca-ocupada {
+            background-color: #fff3cd; /* Amarelo claro */
+            border-color: #ffc107; /* Amarelo */
+        }
+        .doca-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        #card-title-text-centerrr{
+            padding-bottom: 45px;
+            color: #005abb;
+        }
+
+        /* Estilos para o Pódio do Ranking */
+        .podium-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 300px; /* Altura do pódio */
+            margin-top: 50px;
+        }
+
+        .podium-step {
+            width: 100px;
+            text-align: center;
+            position: relative;
+            margin: 0 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .podium-step .name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        .podium-step .medal-icon {
+            font-size: 2.5em; /* Tamanho do ícone da medalha */
+            margin-bottom: 10px;
+        }
+
+        .podium-step .base {
+            width: 100%;
+            background-color: #e9ecef;
+            border: 1px solid #dee2e6;
+            position: relative;
+        }
+
+        .podium-step.gold .base { height: 200px; background-color: #ffda6a; border-color: #fec500; }
+        .podium-step.silver .base { height: 150px; background-color: #ced4da; border-color: #adb5bd; }
+        .podium-step.bronze .base { height: 100px; background-color: #e3b17b; border-color: #c68e56; }
+
+         /* Posição dos nomes e medalhas acima da base */
+        .podium-step.gold { order: 2; } /* Ouro no meio */
+        .podium-step.silver { order: 1; } /* Prata à esquerda */
+        .podium-step.bronze { order: 3; } /* Bronze à direita */
+
+        .podium-step .content {
+            position: absolute;
+            bottom: 100%; /* Posiciona acima da base */
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 10px; /* Espaço entre o conteúdo e a base */
+             width: 150%; /* Ajusta a largura para nomes maiores */
+             white-space: normal; /* Permite quebra de linha */
+             word-wrap: break-word;
+        }
+
+         /* Animação simples para as medalhas */
+         @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+         }
+         .podium-step .medal-icon {
+             animation: pulse 1.5s infinite ease-in-out;
+         }
+
+         /* Estilo para o botão de remover funcionário */
+         .btn-remove-funcionario {
+             padding: 0;
+             margin-left: 5px;
+             line-height: 1; /* Alinha o ícone verticalmente */
+         }
+
+         /* Adicione ou ajuste estilos conforme necessário */
+         
+.codigo-funcionario {
+    font-weight: bold;
+    color: #007bff;
+}
+.time-normal { color: green; }
+.time-warning { color: orange; }
+.time-critical { color: red; }
+.progress-bar-tempo { height: 10px; }
+.doca-container {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+.doca-ocupada {
+    background-color: #fff3cd; /* Amarelo claro */
+    border-color: #ffc107; /* Amarelo */
+}
+.doca-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+/* Estilos para o Pódio do Ranking */
+.podium-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 300px; /* Altura do pódio */
+    margin-top: 50px;
+}
+
+.podium-step {
+    width: 100px;
+    text-align: center;
+    position: relative;
+    margin: 0 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.podium-step .name {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 1.2em; /* Aumentado */
+}
+
+.podium-step .medal-icon {
+    font-size: 3em; /* Aumentado */
+    margin-bottom: 10px;
+}
+
+.podium-step .base {
+    width: 100%;
+    background-color: #e9ecef;
+    border: 1px solid #dee2e6;
+    position: relative;
+}
+
+.podium-step.gold .base { height: 200px; background-color: #ffda6a; border-color: #fec500; }
+.podium-step.silver .base { height: 150px; background-color: #ced4da; border-color: #adb5bd; }
+.podium-step.bronze .base { height: 100px; background-color: #e3b17b; border-color: #c68e56; }
+
+ /* Posição dos nomes e medalhas acima da base */
+.podium-step.gold { order: 2; } /* Ouro no meio */
+.podium-step.silver { order: 1; } /* Prata à esquerda */
+.podium-step.bronze { order: 3; } /* Bronze à direita */
+
+.podium-step .content {
+    position: absolute;
+    bottom: 100%; /* Posiciona acima da base */
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 15px; /* Espaço entre o conteúdo e a base */
+     width: 200%; /* Ajusta a largura para nomes maiores */
+     white-space: normal; /* Permite quebra de linha */
+     word-wrap: break-word;
+}
+
+ /* Animação simples para as medalhas */
+ @keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+ }
+ .podium-step .medal-icon {
+     animation: pulse 1.5s infinite ease-in-out;
+ }
+
+ /* Estilo para o botão de remover funcionário */
+ .btn-remove-funcionario {
+     padding: 0;
+     margin-left: 5px;
+     line-height: 1; /* Alinha o ícone verticalmente */
+ }
+
+ .progress-bar {
+  transition: width 0.5s linear;
+}
+
+
+
+    </style>
 </head>
 <body>
     <div class="container">
         <h1 class="text-center mb-4">Sistema de Carregamento de Caminhões.</h1>
-        
+
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab">Operação</button>
+                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Operação</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="cadastro-tab" data-bs-toggle="tab" data-bs-target="#cadastro" type="button" role="tab">Cadastrar Funcionário</button>
+                <button class="nav-link" id="cadastro-tab" data-bs-toggle="tab" data-bs-target="#cadastro" type="button" role="tab" aria-controls="cadastro" aria-selected="false">Cadastrar Funcionário</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="busca-tab" data-bs-toggle="tab" data-bs-target="#busca" type="button" role="tab">Buscar Funcionário</button>
+                <button class="nav-link" id="busca-tab" data-bs-toggle="tab" data-bs-target="#busca" type="button" role="tab" aria-controls="busca" aria-selected="false">Buscar Funcionário</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button" role="tab">Dashboard</button>
+                <button class="nav-link" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button" role="tab" aria-controls="dashboard" aria-selected="false">Dashboard</button>
+            </li>
+             <li class="nav-item" role="presentation">
+                <button class="nav-link" id="ranking-tab" data-bs-toggle="tab" data-bs-target="#ranking" type="button" role="tab" aria-controls="ranking" aria-selected="false">Ranking</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="docas-tab" data-bs-toggle="tab" data-bs-target="#docas" type="button" role="tab">Docas</button>
+                <button class="nav-link" id="docas-tab" data-bs-toggle="tab" data-bs-target="#docas" type="button" role="tab" aria-controls="docas" aria-selected="false">Docas</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="historico-tab" data-bs-toggle="tab" data-bs-target="#historico" type="button" role="tab">Histórico</button>
+                <button class="nav-link" id="historico-tab" data-bs-toggle="tab" data-bs-target="#historico" type="button" role="tab" aria-controls="historico" aria-selected="false">Histórico</button>
             </li>
         </ul>
-        
+
         <div class="tab-content" id="myTabContent">
             <!-- ABA PRINCIPAL (OPERAÇÃO) -->
-            <div class="tab-pane fade show active" id="home" role="tabpanel">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                 <div class="row mt-3">
                     <div class="col-md-6">
                         <div class="card">
@@ -43,6 +260,8 @@
                                 <h5 class="card-title">Operações de Carregamento</h5>
                                 <button id="btnIniciarCarregamento" class="btn btn-primary btn-lg w-100 mb-3">Iniciar Carregamento</button>
                                 <button id="btnFinalizarCarregamento" class="btn btn-success btn-lg w-100">Finalizar Carregamento</button>
+                                <!-- Novo botão para adicionar funcionário a carregamento existente -->
+                                <button id="btnAddFuncionarioCarregamento" class="btn btn-secondary btn-lg w-100 mt-3">Adicionar Funcionário a Carregamento Existente</button>
                             </div>
                         </div>
                     </div>
@@ -56,7 +275,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="row mt-3" id="formContainer" style="display: none;">
                     <div class="col-md-6">
                         <div class="card">
@@ -64,7 +283,7 @@
                                 <h5 class="card-title" id="formTitle">Informações do Carregamento</h5>
                                 <div id="carregadoresContainer">
                                     <div class="mb-3">
-                                        <label for="funcionarioId" class="form-label">Código do Funcionário</label>
+                                        <label for="funcionarioId" class="form-label">Código do Funcionário Principal</label>
                                         <div class="input-group">
                                             <input type="text" class="form-control funcionario-input" placeholder="Ex: GZL-EO-1234">
                                             <button class="btn btn-outline-secondary btn-scan" type="button">
@@ -83,6 +302,7 @@
                                 <div class="mb-3">
                                     <label for="docaNumero" class="form-label">Doca</label>
                                     <select class="form-select" id="docaNumero">
+                                        <option value="">Selecione a Doca</option>
                                         <option value="1">Doca 1</option>
                                         <option value="2">Doca 2</option>
                                         <option value="3">Doca 3</option>
@@ -102,7 +322,37 @@
                         </div>
                     </div>
                 </div>
-                
+
+                 <!-- Formulário para Adicionar Funcionário a Carregamento Existente -->
+                 <div class="row mt-3" id="formAddFuncionarioContainer" style="display: none;">
+                     <div class="col-md-6">
+                         <div class="card">
+                             <div class="card-body">
+                                 <h5 class="card-title">Adicionar Funcionário a Carregamento Existente</h5>
+                                 <div class="mb-3">
+                                     <label for="addFuncionarioId" class="form-label">Código do Funcionário a Adicionar</label>
+                                     <div class="input-group">
+                                         <input type="text" class="form-control" id="addFuncionarioId" placeholder="Ex: GZL-EO-1234">
+                                          <button class="btn btn-outline-secondary btn-scan" type="button" data-target-input="#addFuncionarioId">
+                                             <i class="bi bi-camera"></i> Ler QR Code
+                                         </button>
+                                     </div>
+                                 </div>
+                                 <div class="mb-3">
+                                     <label for="carregamentoDestino" class="form-label">Selecionar Carregamento (Doca - DT)</label>
+                                     <select class="form-select" id="carregamentoDestino">
+                                         <option value="">Selecione um carregamento em andamento</option>
+                                         <!-- Opções serão preenchidas via JS -->
+                                     </select>
+                                 </div>
+                                 <button id="btnConfirmarAddFuncionario" class="btn btn-primary">Adicionar Funcionário</button>
+                                 <button id="btnCancelarAddFuncionario" class="btn btn-secondary">Cancelar</button>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+
+
                 <!-- Scanner de QR Code -->
                 <div class="row mt-3" id="scannerContainer" style="display: none;">
                     <div class="col-md-6 offset-md-3">
@@ -121,7 +371,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="row mt-3">
                     <div class="col-12">
                         <div class="card">
@@ -133,9 +383,9 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- ABA DE CADASTRO -->
-            <div class="tab-pane fade" id="cadastro" role="tabpanel">
+            <div class="tab-pane fade" id="cadastro" role="tabpanel" aria-labelledby="cadastro-tab">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
@@ -163,16 +413,16 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- ABA DE BUSCA -->
-            <div class="tab-pane fade" id="busca" role="tabpanel">
+            <div class="tab-pane fade" id="busca" role="tabpanel" aria-labelledby="busca-tab">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="buscarFuncionario" class="form-label">Código ou Nome do Funcionário</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" id="buscarFuncionario" placeholder="Ex: GZL-EO-1234 ou João Silva">
-                                <button class="btn btn-outline-secondary" type="button" id="btnBuscarQRCode">
+                                <button class="btn btn-outline-secondary btn-scan" type="button" data-target-input="#buscarFuncionario">
                                     <i class="bi bi-camera"></i> Ler QR Code
                                 </button>
                             </div>
@@ -182,18 +432,18 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- ABA DASHBOARD -->
-            <div class="tab-pane fade" id="dashboard" role="tabpanel">
+            <div class="tab-pane fade" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
                 <div class="row">
                     <div class="col-12">
                         <h3>Dashboard em Tempo Real</h3>
                         <div class="alert alert-info">
-                            <strong>Total de Carregamentos Hoje:</strong> <span id="totalCarregamentosHoje">0</span>
+                            <strong>Total de Carregamentos em Andamento:</strong> <span id="totalCarregamentosHoje">0</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="row mt-3">
                     <div class="col-md-6">
                         <div class="card dashboard-card">
@@ -213,94 +463,128 @@
                     </div>
                 </div>
             </div>
-            
+
+             <!-- ABA RANKING -->
+             <div class="tab-pane fade" id="ranking" role="tabpanel" aria-labelledby="ranking-tab">
+                 <div class="row mt-3">
+                     <div class="col-12 text-center">
+                         <h2>Ranking Mensal de Carregamentos</h2>
+                         <p class="text-muted">Os funcionários com mais carregamentos finalizados no mês.</p>
+                     </div>
+                 </div>
+                 <div class="row mt-4">
+                     <div class="col-12">
+                         <div class="card dashboard-card">
+                             <div class="card-body">
+                                 <h5 id="card-title-text-centerrr"class="card-title text-center">Pódio</h5>
+                                 <div id="podiumContainer" class="podium-container">
+                                     <!-- Pódio será preenchido via JS -->
+                                 </div>
+                                  <p class="text-center mt-4" id="rankingMesAno"></p>
+                                  <div id="rankingLoading" class="text-center" style="display: none;">
+                                      <div class="spinner-border text-primary" role="status">
+                                          <span class="visually-hidden">Carregando...</span>
+                                      </div>
+                                  </div>
+                                 <div id="rankingEmpty" class="alert alert-info text-center mt-3" style="display: none;">
+                                     Sem dados suficientes para o ranking deste mês.
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
             <!-- ABA DOCAS -->
-            <div class="tab-pane fade" id="docas" role="tabpanel">
+            <div class="tab-pane fade" id="docas" role="tabpanel" aria-labelledby="docas-tab">
                 <div class="row">
                     <div class="col-12">
                         <h3>Status das Docas</h3>
                         <p class="text-muted">Monitoramento em tempo real das docas de carregamento</p>
                     </div>
                 </div>
-                
+
                 <div class="row mt-3" id="docasContainer">
                     <!-- As docas serão preenchidas via JavaScript -->
                 </div>
             </div>
-            
+
             <!-- ABA HISTÓRICO -->
-            <div class="tab-pane fade" id="historico" role="tabpanel">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="filtroMes" class="form-label">Mês</label>
-                            <select class="form-select" id="filtroMes">
-                                <option value="01">Janeiro</option>
-                                <option value="02">Fevereiro</option>
-                                <option value="03">Março</option>
-                                <option value="04">Abril</option>
-                                <option value="05">Maio</option>
-                                <option value="06">Junho</option>
-                                <option value="07">Julho</option>
-                                <option value="08">Agosto</option>
-                                <option value="09">Setembro</option>
-                                <option value="10">Outubro</option>
-                                <option value="11">Novembro</option>
-                                <option value="12">Dezembro</option>
-                            </select>
+            <div class="tab-pane fade" id="historico" role="tabpanel" aria-labelledby="historico-tab">
+                <!-- Conteúdo do histórico (inicialmente oculto) -->
+                <div id="historicoContent">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="filtroMes" class="form-label">Mês</label>
+                                <select class="form-select" id="filtroMes">
+                                    <option value="01">Janeiro</option>
+                                    <option value="02">Fevereiro</option>
+                                    <option value="03">Março</option>
+                                    <option value="04">Abril</option>
+                                    <option value="05">Maio</option>
+                                    <option value="06">Junho</option>
+                                    <option value="07">Julho</option>
+                                    <option value="08">Agosto</option>
+                                    <option value="09">Setembro</option>
+                                    <option value="10">Outubro</option>
+                                    <option value="11">Novembro</option>
+                                    <option value="12">Dezembro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="filtroAno" class="form-label">Ano</label>
+                                <select class="form-select" id="filtroAno">
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="filtroFuncionario" class="form-label">Funcionário (opcional)</label>
+                                <input type="text" class="form-control" id="filtroFuncionario" placeholder="Código do Funcionário">
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="filtroAno" class="form-label">Ano</label>
-                            <select class="form-select" id="filtroAno">
-                                <option value="2023">2023</option>
-                                <option value="2024">2024</option>
-                                <option value="2025">2025</option>
-                            </select>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <button id="btnFiltrar" class="btn btn-primary">Filtrar</button>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="filtroFuncionario" class="form-label">Funcionário (opcional)</label>
-                            <input type="text" class="form-control" id="filtroFuncionario" placeholder="Código do Funcionário">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-12">
-                        <button id="btnFiltrar" class="btn btn-primary">Filtrar</button>
-                    </div>
-                </div>
-                
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Estatísticas Gerais</h5>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="card bg-light mb-3">
-                                            <div class="card-body">
-                                                <h6 class="card-title">Total de Caminhões</h6>
-                                                <p class="display-4 text-center" id="totalCaminhoes">0</p>
+
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Estatísticas Gerais (Mês/Filtro)</h5>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="card bg-light mb-3">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">Total de Caminhões</h6>
+                                                    <p class="display-4 text-center" id="totalCaminhoes">0</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="card bg-light mb-3">
-                                            <div class="card-body">
-                                                <h6 class="card-title">Média de Tempo</h6>
-                                                <p class="display-4 text-center" id="mediaTempo">0 min</p>
+                                        <div class="col-md-4">
+                                            <div class="card bg-light mb-3">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">Média de Tempo</h6>
+                                                    <p class="display-4 text-center" id="mediaTempo">0 min</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="card bg-light mb-3">
-                                            <div class="card-body">
-                                                <h6 class="card-title">Valor Total</h6>
-                                                <p class="display-4 text-center" id="valorTotal">R$ 0,00</p>
+                                        <div class="col-md-4">
+                                            <div class="card bg-light mb-3">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">Valor Total Estimado</h6>
+                                                    <p class="display-4 text-center" id="valorTotal">R$ 0,00</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -308,58 +592,63 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Top Funcionários</h5>
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Posição</th>
-                                                <th>Funcionário</th>
-                                                <th>Carregamentos</th>
-                                                <th>Tempo Médio</th>
-                                                <th>Valor Ganho</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="topFuncionarios">
-                                        </tbody>
-                                    </table>
+
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Ranking Completo (Mês/Filtro)</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Posição</th>
+                                                    <th>Funcionário</th>
+                                                    <th>Carregamentos</th>
+                                                    <th>Tempo Médio</th>
+                                                    <th>Valor Ganho Estimado</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="topFuncionariosHistorico"> <!-- ID alterado para evitar conflito -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Histórico Completo (Mês/Filtro)</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Data</th>
+                                                    <th>DT</th>
+                                                    <th>Funcionário Principal</th>
+                                                    <th>Carregadores Auxiliares</th>
+                                                    <th>Início</th>
+                                                    <th>Fim</th>
+                                                    <th>Tempo</th>
+                                                    <th>Doca</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tabelaHistorico">
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Histórico Completo</h5>
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Data</th>
-                                                <th>DT</th>
-                                                <th>Funcionário</th>
-                                                <th>Início</th>
-                                                <th>Fim</th>
-                                                <th>Tempo</th>
-                                                <th>Doca</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tabelaHistorico">
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                 <!-- Mensagem de acesso restrito -->
+                <div id="historicoRestrito" class="alert alert-warning mt-3 text-center">
+                    Acesso ao histórico restrito. Por favor, autentique-se para visualizar.
                 </div>
             </div>
         </div>
@@ -405,6 +694,7 @@
             </div>
         </div>
     </div>
+
     <div class="text-end fixed-bottom mb-3 me-3">
         <button id="btnLogout" class="btn btn-sm btn-outline-danger">
             <i class="bi bi-box-arrow-right"></i> Sair
@@ -412,1250 +702,1718 @@
     </div>
 
     <!-- Inclui as bibliotecas necessárias -->
-    <script src="../js/key.js"></script>
+    <script src="../js/key.js"></script> <!-- Certifique-se que este arquivo existe e contém a senha -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+
     <script>
         // Inicializa o Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyBAH_sO68BD_vt9J40Hf8rdgLTNQEuEEBc",
-            authDomain: "produtividade-bc.firebaseapp.com",
-            projectId: "produtividade-bc",
-            storageBucket: "produtividade-bc.appspot.com",
-            messagingSenderId: "665932698083",
-            appId: "1:665932698083:web:1c807c6b1571e3024bd0d6",
-            measurementId: "G-608P3H613B"
-        };
+const firebaseConfig = {
+    apiKey: "AIzaSyBAH_sO68BD_vt9J40Hf8rdgLTNQEuEEBc", // Substitua pela sua chave
+    authDomain: "produtividade-bc.firebaseapp.com", // Substitua pelo seu domínio
+    projectId: "produtividade-bc", // Substitua pelo seu ID do projeto
+    storageBucket: "produtividade-bc.appspot.com", // Substitua pelo seu bucket
+    messagingSenderId: "665932698083", // Substitua pelo seu ID
+    appId: "1:665932698083:web:1c807c6b1571e3024bd0d6", // Substitua pelo seu ID
+    measurementId: "G-608P3H613B" // Substitua pelo seu ID
+};
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const auth = firebase.auth();
-        
-        // Referências do banco de dados
-        const funcionariosRef = database.ref('funcionarios');
-        const carregamentosRef = database.ref('carregamentos');
-        const estatisticasRef = database.ref('estatisticas');
-        const docasRef = database.ref('docas');
+const app = firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+const auth = firebase.auth();
 
-        // Verifica autenticação
-        auth.onAuthStateChanged((user) => {
-            if (!user) {
-                window.location.href = "index.html";
+// Referências do banco de dados
+const funcionariosRef = database.ref('funcionarios');
+const carregamentosRef = database.ref('carregamentos');
+const docasRef = database.ref('docas'); // Referência para o status das docas
+
+// Verifica autenticação
+auth.onAuthStateChanged((user) => {
+    if (!user) {
+        window.location.href = "index.html"; // Redireciona para a página de login
+    } else {
+        // Usuário autenticado, inicializa o sistema
+        inicializarSistema();
+    }
+});
+
+// Botão de logout
+document.getElementById('btnLogout').addEventListener('click', () => {
+    auth.signOut().then(() => {
+        window.location.href = "index.html"; // Redireciona para a página de login
+    });
+});
+
+// Variáveis globais
+let operacaoAtual = null; // 'iniciar', 'finalizar', 'addFuncionario'
+let carregamentosEmAndamento = {};
+let intervalos = {}; // Para armazenar timers de atualização
+let scannerActive = false;
+let stream = null;
+let currentScannerInput = null;
+let historicoAutenticado = false; // Controla o acesso ao histórico
+
+ // Valor base por colaborador por carregamento COMPLETO
+const VALOR_POR_COLABORADOR_POR_CARREGAMENTO = 2.50;
+const TEMPO_LIMITE_MINUTOS = 140; // 2 horas e 20 minutos
+
+// Função principal de inicialização após autenticação
+function inicializarSistema() {
+     // Oculta o conteúdo do histórico inicialmente e mostra a mensagem de restrição
+    document.getElementById('historicoContent').style.display = 'none';
+    document.getElementById('historicoRestrito').style.display = 'block';
+
+    atualizarTemposContinuamente(); // Inicia a atualização dos tempos
+    atualizarDashboard(); // Inicia a escuta para o dashboard e docas
+    atualizarRankingDashboard(); // Atualiza o ranking na aba Ranking
+
+    // Configura o filtro do histórico para o mês/ano atual
+    const hoje = new Date();
+    const mesAtual = (hoje.getMonth() + 1).toString().padStart(2, '0');
+    const anoAtual = hoje.getFullYear().toString();
+
+    document.getElementById('filtroMes').value = mesAtual;
+    document.getElementById('filtroAno').value = anoAtual;
+
+    // Event Listeners
+    document.getElementById('btnIniciarCarregamento').addEventListener('click', function() {
+        operacaoAtual = 'iniciar';
+        hideAllForms(); // Esconde outros formulários
+        document.getElementById('formContainer').style.display = 'block';
+        document.getElementById('formTitle').textContent = 'Iniciar Carregamento';
+        document.getElementById('btnConfirmar').textContent = 'Iniciar';
+         // Mostra campos necessários para iniciar
+        document.getElementById('placaCaminhao').closest('.mb-3').style.display = 'block';
+        document.getElementById('docaNumero').closest('.mb-3').style.display = 'block';
+        document.getElementById('btnAddCarregador').style.display = 'block';
+         // Limpa os inputs de funcionário
+        document.querySelectorAll('#carregadoresContainer .funcionario-input').forEach(input => input.value = '');
+         // Remove carregadores adicionais, exceto o primeiro
+        const carregadoresContainer = document.getElementById('carregadoresContainer');
+        while (carregadoresContainer.children.length > 1) {
+            carregadoresContainer.removeChild(carregadoresContainer.lastChild);
+        }
+    });
+
+    document.getElementById('btnFinalizarCarregamento').addEventListener('click', function() {
+        operacaoAtual = 'finalizar';
+        hideAllForms(); // Esconde outros formulários
+        document.getElementById('formContainer').style.display = 'block';
+        document.getElementById('formTitle').textContent = 'Finalizar Carregamento';
+        document.getElementById('btnConfirmar').textContent = 'Finalizar';
+
+        // Esconde campos não necessários para finalização
+        document.getElementById('placaCaminhao').closest('.mb-3').style.display = 'none';
+        document.getElementById('docaNumero').closest('.mb-3').style.display = 'none';
+        document.getElementById('btnAddCarregador').style.display = 'none';
+         // Limpa os inputs de funcionário
+        document.querySelectorAll('#carregadoresContainer .funcionario-input').forEach(input => input.value = '');
+         // Remove carregadores adicionais, exceto o primeiro
+        const carregadoresContainer = document.getElementById('carregadoresContainer');
+        while (carregadoresContainer.children.length > 1) {
+            carregadoresContainer.removeChild(carregadoresContainer.lastChild);
+        }
+    });
+
+    // Novo botão para Adicionar Funcionário a Carregamento Existente
+    document.getElementById('btnAddFuncionarioCarregamento').addEventListener('click', function() {
+         operacaoAtual = 'addFuncionario';
+         hideAllForms(); // Esconde outros formulários
+         document.getElementById('formAddFuncionarioContainer').style.display = 'block';
+         document.getElementById('addFuncionarioId').value = ''; // Limpa o campo
+         preencherSelectCarregamentos(); // Preenche o select de carregamentos
+    });
+
+
+    document.getElementById('btnConfirmar').addEventListener('click', function() {
+        if (operacaoAtual === 'iniciar') {
+            iniciarCarregamento();
+        } else if (operacaoAtual === 'finalizar') {
+            finalizarCarregamento();
+        }
+    });
+
+    document.getElementById('btnCancelar').addEventListener('click', function() {
+        hideAllForms(); // Esconde todos os formulários
+         // Restaura a exibição dos campos do formulário de iniciar (estado padrão)
+        document.getElementById('placaCaminhao').closest('.mb-3').style.display = 'block';
+        document.getElementById('docaNumero').closest('.mb-3').style.display = 'block';
+        document.getElementById('btnAddCarregador').style.display = 'block';
+         // Limpa os inputs de funcionário
+        document.querySelectorAll('#carregadoresContainer .funcionario-input').forEach(input => input.value = '');
+         // Remove carregadores adicionais, exceto o primeiro
+        const carregadoresContainer = document.getElementById('carregadoresContainer');
+        while (carregadoresContainer.children.length > 1) {
+            carregadoresContainer.removeChild(carregadoresContainer.lastChild);
+        }
+    });
+
+     // Cancelar Adicionar Funcionário a Carregamento Existente
+    document.getElementById('btnCancelarAddFuncionario').addEventListener('click', function() {
+        hideAllForms(); // Esconde todos os formulários
+    });
+
+     // Confirmar Adicionar Funcionário a Carregamento Existente
+    document.getElementById('btnConfirmarAddFuncionario').addEventListener('click', addFuncionarioToCarregamento);
+
+
+    document.getElementById('btnAddCarregador').addEventListener('click', function() {
+        const container = document.getElementById('carregadoresContainer');
+        const newInput = document.createElement('div');
+        newInput.className = 'mb-3';
+        newInput.innerHTML = `
+            <label class="form-label">Código do Carregador Adicional</label>
+            <div class="input-group">
+                <input type="text" class="form-control funcionario-input" placeholder="Ex: GZL-EO-1234">
+                <button class="btn btn-outline-secondary btn-scan" type="button">
+                    <i class="bi bi-camera"></i> Ler QR Code
+                </button>
+            </div>
+        `;
+        container.appendChild(newInput);
+
+        // Adiciona evento ao novo botão de scan
+        newInput.querySelector('.btn-scan').addEventListener('click', function() {
+            iniciarScanner(newInput.querySelector('.funcionario-input'));
+        });
+    });
+
+    // Adiciona evento de scan aos botões de scan que já existem no HTML (para o primeiro input)
+    document.querySelectorAll('.btn-scan').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Verifica se o botão tem um atributo data-target-input para saber qual input preencher
+            const targetInputSelector = this.getAttribute('data-target-input');
+            const input = targetInputSelector ? document.querySelector(targetInputSelector) : this.closest('.input-group').querySelector('.funcionario-input');
+            if (input) {
+                 iniciarScanner(input);
+            } else {
+                 console.error("Input target não encontrado para o scanner.");
             }
         });
+    });
 
-        // Botão de logout
-        document.getElementById('btnLogout').addEventListener('click', () => {
-            auth.signOut().then(() => {
-                window.location.href = "index.html";
-            });
+
+    document.getElementById('btnCloseScanner').addEventListener('click', pararScanner);
+
+    // Cadastro de funcionário
+    document.getElementById('btnCadastrar').addEventListener('click', function() {
+        const nome = document.getElementById('novoNome').value.trim();
+        const cargo = document.getElementById('novoCargo').value.trim();
+
+        if (!nome || !cargo) {
+            alert('Preencha todos os campos!');
+            return;
+        }
+
+        const codigo = gerarCodigoFuncionario();
+        document.getElementById('codigoGerado').textContent = codigo;
+        document.getElementById('codigoGerado').style.display = 'block';
+
+        // Gera QR code
+        gerarQRCode(codigo);
+        document.getElementById('qrCodeContainer').style.display = 'block';
+
+        // Mostra informações
+        document.getElementById('infoCadastro').innerHTML = `
+            <div class="alert alert-success mt-3">
+                <strong>Funcionário cadastrado com sucesso!</strong><br>
+                Nome: ${nome}<br>
+                Cargo: ${cargo}
+            </div>
+        `;
+
+        // Mostra botão para download do PDF
+        document.getElementById('btnDownloadPDF').style.display = 'block';
+
+        // Salva no Firebase
+        funcionariosRef.child(codigo).set({
+            nome,
+            cargo,
+            dataCadastro: new Date().getTime()
         });
-        
-        // Variáveis globais
-        let operacaoAtual = null; // 'iniciar' ou 'finalizar'
-        let carregamentosEmAndamento = {};
-        let intervalos = {};
-        let scannerActive = false;
-        let stream = null;
-        let currentScannerInput = null;
-        
-        // Gera um código único para o funcionário
-        function gerarCodigoFuncionario() {
-            const prefixo = "GZL-EO-";
-            const randomPart = Math.floor(1000 + Math.random() * 9000); // Número entre 1000 e 9999
-            return prefixo + randomPart;
+    });
+
+    // Download PDF
+    document.getElementById('btnDownloadPDF').addEventListener('click', function() {
+        const codigo = document.getElementById('codigoGerado').textContent;
+        const nome = document.getElementById('novoNome').value.trim();
+        const cargo = document.getElementById('novoCargo').value.trim();
+        gerarPDFCodigo(codigo, nome, cargo);
+    });
+
+    // Buscar funcionário
+    document.getElementById('btnBuscar').addEventListener('click', function() {
+        const termoBusca = document.getElementById('buscarFuncionario').value.trim();
+        if (!termoBusca) {
+            alert('Informe o código ou nome do funcionário!');
+            return;
         }
-        
-        // Gera QR Code para o funcionário
-        function gerarQRCode(codigo, canvasId = 'qrCodeCanvas') {
-            const canvas = document.getElementById(canvasId);
-            QRCode.toCanvas(canvas, codigo, { width: 200 }, (error) => {
-                if (error) console.error('Erro ao gerar QR code:', error);
-            });
-        }
-        
-        // Gera PDF com o código do funcionário
-        function gerarPDFCodigo(codigo, nome, cargo) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Configurações iniciais
-            doc.setFontSize(20);
-            doc.setTextColor(40);
-            doc.setFont("helvetica", "bold");
-            doc.text('Código do Funcionário', 105, 20, { align: 'center' });
-            
-            // Informações do funcionário
-            doc.setFontSize(14);
-            doc.setFont("helvetica", "normal");
-            doc.text('Nome:', 20, 40);
-            doc.text(nome, 50, 40);
-            
-            doc.text('Cargo:', 20, 50);
-            doc.text(cargo, 50, 50);
-            
-            doc.text('Código:', 20, 70);
-            doc.setFontSize(24);
-            doc.setFont("helvetica", "bold");
-            doc.text(codigo, 50, 70);
-            
-            // Gera QR code e adiciona ao PDF
-            const canvas = document.getElementById('qrCodeCanvas');
-            const imgData = canvas.toDataURL('image/png');
-            doc.addImage(imgData, 'PNG', 140, 40, 50, 50);
-            
-            // Data de emissão
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "normal");
-            const hoje = new Date();
-            doc.text(`Emitido em: ${hoje.toLocaleDateString()}`, 20, 130);
-            
-            // Salva o PDF
-            doc.save(`codigo-funcionario-${codigo}.pdf`);
-        }
-        
-        // Inicia o scanner de QR code
-        function iniciarScanner(inputElement) {
-            currentScannerInput = inputElement;
-            const video = document.getElementById('video');
-            const scanResult = document.getElementById('scanResult');
-            
-            // Mostra o container do scanner
-            document.getElementById('scannerContainer').style.display = 'block';
-            scannerActive = true;
-            scanResult.style.display = 'none';
-            
-            // Solicita permissão para acessar a câmera
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-                .then(function(s) {
-                    stream = s;
-                    video.srcObject = stream;
-                    video.play();
-                    
-                    // Processa o vídeo para detectar QR codes
-                    requestAnimationFrame(tick);
-                })
-                .catch(function(err) {
-                    console.error("Erro ao acessar a câmera:", err);
-                    alert("Não foi possível acessar a câmera. Verifique as permissões.");
-                    pararScanner();
-                });
-        }
-        
-        // Para o scanner de QR code
-        function pararScanner() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
-            scannerActive = false;
-            document.getElementById('scannerContainer').style.display = 'none';
-            currentScannerInput = null;
-        }
-        
-        // Processa o vídeo para detectar QR codes
-        function tick() {
-            const video = document.getElementById('video');
-            const canvas = document.createElement('canvas');
-            const scanResult = document.getElementById('scanResult');
-            
-            if (video.readyState === video.HAVE_ENOUGH_DATA && scannerActive) {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                    inversionAttempts: "dontInvert",
-                });
-                
-                if (code) {
-                    // QR code detectado
-                    scanResult.textContent = `Código detectado: ${code.data}`;
-                    scanResult.style.display = 'block';
-                    
-                    // Preenche o campo do funcionário com o código lido
-                    if (currentScannerInput) {
-                        currentScannerInput.value = code.data;
-                    }
-                    
-                    // Para o scanner após 1 segundo
-                    setTimeout(pararScanner, 1000);
-                    return;
+
+        // Verifica se é um código (começa com GZL-EO)
+        if (termoBusca.startsWith('GZL-EO')) {
+            buscarFuncionario(termoBusca, true);
+        } else {
+            // Busca por nome
+            funcionariosRef.orderByChild('nome').once('value', (snapshot) => {
+                const funcionarios = snapshot.val() || {};
+                const resultados = Object.entries(funcionarios)
+                    .filter(([id, func]) =>
+                        func.nome && func.nome.toLowerCase().includes(termoBusca.toLowerCase())
+                    )
+                    .map(([id, func]) => ({ id, ...func }));
+
+                if (resultados.length === 0) {
+                    alert('Nenhum funcionário encontrado com esse nome!');
+                } else if (resultados.length === 1) {
+                    // Se só um resultado, mostra diretamente
+                    buscarFuncionario(resultados[0].id, true);
+                } else {
+                    // Se múltiplos resultados, mostra lista
+                    let html = '<div class="list-group mb-3">';
+                    resultados.forEach(func => {
+                        html += `
+                            <a href="#" class="list-group-item list-group-item-action"
+                            onclick="buscarFuncionario('${func.id}', true); return false;">
+                                ${func.nome} <small class="text-muted">${func.id}</small>
+                            </a>
+                        `;
+                    });
+                    html += '</div>';
+                    document.getElementById('infoFuncionario').innerHTML = html;
                 }
-            }
-            
-            if (scannerActive) {
-                requestAnimationFrame(tick);
-            }
+            });
+        }
+    });
+
+     // Acesso ao histórico
+    document.getElementById('historico-tab').addEventListener('click', function(e) {
+        if (!historicoAutenticado) {
+            e.preventDefault(); // Impede a troca de aba imediata
+
+            // Reseta o modal
+            document.getElementById('inputSenhaHistorico').value = '';
+            document.getElementById('senhaIncorreta').classList.add('d-none');
+
+            const modal = new bootstrap.Modal(document.getElementById('modalSenhaHistorico'));
+            modal.show();
+        } else {
+            // Se já autenticado, apenas atualiza o histórico para o mês/ano atual
+            const hoje = new Date();
+            atualizarHistorico(hoje.getMonth() + 1, hoje.getFullYear());
+        }
+    });
+
+     // Botão Acessar Histórico (no modal de senha)
+    document.getElementById('btnAcessarHistorico').addEventListener('click', verificarSenhaHistorico);
+
+    // Permite submeter a senha com Enter no modal do histórico
+    document.getElementById('inputSenhaHistorico').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            verificarSenhaHistorico();
+        }
+    });
+
+    // Filtrar histórico (dentro da aba histórico, só funciona após autenticação)
+    document.getElementById('btnFiltrar').addEventListener('click', function() {
+         if (historicoAutenticado) {
+            const mes = parseInt(document.getElementById('filtroMes').value);
+            const ano = parseInt(document.getElementById('filtroAno').value);
+            const funcionarioId = document.getElementById('filtroFuncionario').value.trim() || null;
+
+             // Remove o listener anterior antes de adicionar um novo para evitar duplicação
+            carregamentosRef.off('value', null, null); // Desconecta todos os listeners 'value'
+
+            atualizarHistorico(mes, ano, funcionarioId);
+         }
+    });
+
+     // Listener para a aba Ranking
+    document.getElementById('ranking-tab').addEventListener('click', function() {
+        atualizarRankingDashboard(); // Atualiza o ranking sempre que a aba for acessada
+    });
+}
+
+// Função para esconder todos os formulários de operação
+function hideAllForms() {
+    document.getElementById('formContainer').style.display = 'none';
+    document.getElementById('formAddFuncionarioContainer').style.display = 'none';
+}
+
+
+// Gera um código único para o funcionário
+function gerarCodigoFuncionario() {
+    const prefixo = "GZL-EO-";
+    const randomPart = Math.floor(10000 + Math.random() * 90000); // Número entre 10000 e 99999
+    return prefixo + randomPart;
+}
+
+// Gera QR Code para o funcionário
+function gerarQRCode(codigo, canvasId = 'qrCodeCanvas') {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    QRCode.toCanvas(canvas, codigo, { width: 200 }, (error) => {
+        if (error) console.error('Erro ao gerar QR code:', error);
+    });
+}
+
+// Gera PDF com o código do funcionário
+function gerarPDFCodigo(codigo, nome, cargo) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Configurações iniciais
+    doc.setFontSize(20);
+    doc.setTextColor(40);
+    doc.setFont("helvetica", "bold");
+    doc.text('Código do Funcionário', 105, 20, { align: 'center' });
+
+    // Informações do funcionário
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "normal");
+    doc.text('Nome:', 20, 40);
+    doc.text(nome, 50, 40);
+
+    doc.text('Cargo:', 20, 50);
+    doc.text(cargo, 50, 50);
+
+    doc.text('Código:', 20, 70);
+    doc.setFontSize(24);
+    doc.setFont("helvetica", "bold");
+    doc.text(codigo, 50, 70);
+
+    // Gera QR code e adiciona ao PDF
+    const canvas = document.getElementById('qrCodeCanvas');
+     if (canvas) {
+        const imgData = canvas.toDataURL('image/png');
+        doc.addImage(imgData, 'PNG', 140, 40, 50, 50);
+     }
+
+
+    // Data de emissão
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const hoje = new Date();
+    doc.text(`Emitido em: ${hoje.toLocaleDateString()}`, 20, 130);
+
+    // Salva o PDF
+    doc.save(`codigo-funcionario-${codigo}.pdf`);
+}
+
+ // Inicia o scanner de QR code
+function iniciarScanner(inputElement) {
+    currentScannerInput = inputElement;
+    const video = document.getElementById('video');
+    const scanResult = document.getElementById('scanResult');
+
+    // Mostra o container do scanner
+    document.getElementById('scannerContainer').style.display = 'block';
+    scannerActive = true;
+    scanResult.style.display = 'none';
+
+    // Solicita permissão para acessar a câmera
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+        .then(function(s) {
+            stream = s;
+            video.srcObject = stream;
+            video.play();
+
+            // Processa o vídeo para detectar QR codes
+            requestAnimationFrame(tick);
+        })
+        .catch(function(err) {
+            console.error("Erro ao acessar a câmera:", err);
+            alert("Não foi possível acessar a câmera. Verifique as permissões.");
+            pararScanner();
+        });
+}
+
+// Para o scanner de QR code
+function pararScanner() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+    scannerActive = false;
+    document.getElementById('scannerContainer').style.display = 'none';
+    currentScannerInput = null;
+}
+
+// Processa o vídeo para detectar QR codes
+function tick() {
+    const video = document.getElementById('video');
+    const canvas = document.createElement('canvas');
+    const scanResult = document.getElementById('scanResult');
+
+    if (!scannerActive || !video || video.readyState !== video.HAVE_ENOUGH_DATA) {
+         if(scannerActive) requestAnimationFrame(tick); // Continua se ainda ativo e pronto
+        return;
+    }
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: "dontInvert",
+    });
+
+    if (code) {
+        // QR code detectado
+        scanResult.textContent = `Código detectado: ${code.data}`;
+        scanResult.style.display = 'block';
+
+        // Preenche o campo do funcionário com o código lido
+        if (currentScannerInput) {
+            currentScannerInput.value = code.data;
         }
 
-        // Variável para controlar se o usuário está autenticado
-        let historicoAutenticado = false;
-        
-        function verificarSenhaHistorico() {
+        // Para o scanner após 1 segundo
+        setTimeout(pararScanner, 1000);
+        return;
+    }
+
+    if (scannerActive) {
+        requestAnimationFrame(tick);
+    }
+}
+
+ // Verifica a senha do histórico
+function verificarSenhaHistorico() {
+    // SENHA_HISTORICO deve estar definida em key.js
+    if (typeof SENHA_HISTORICO === 'undefined') {
+        alert("Erro: Senha do histórico não configurada. Crie o arquivo key.js.");
+        return;
+    }
+
     const senhaDigitada = document.getElementById('inputSenhaHistorico').value;
     if (senhaDigitada === SENHA_HISTORICO) {
         historicoAutenticado = true;
         const modal = bootstrap.Modal.getInstance(document.getElementById('modalSenhaHistorico'));
         modal.hide();
-        
-        // Mostra todo o conteúdo do histórico
-        document.querySelectorAll('#historico > *').forEach(el => {
-            el.style.display = '';
-        });
-        
-        // Ativa a aba de histórico
-        const historicoTab = document.getElementById('historico-tab');
-        const historicoPane = document.getElementById('historico');
-        
-        // Remove active de todas as abas
-        document.querySelectorAll('.nav-link').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        document.querySelectorAll('.tab-pane').forEach(pane => {
-            pane.classList.remove('show', 'active');
-        });
-        
-        // Adiciona active à aba de histórico
-        historicoTab.classList.add('active');
-        historicoPane.classList.add('show', 'active');
-        
-        // Atualiza o histórico
+
+        // Mostra o conteúdo do histórico e esconde a mensagem de restrição
+        document.getElementById('historicoContent').style.display = 'block';
+        document.getElementById('historicoRestrito').style.display = 'none';
+
+        // Ativa a aba de histórico (já deve estar ativa pelo clique, mas reforça)
+         const historicoTab = document.getElementById('historico-tab');
+         const historicoPane = document.getElementById('historico');
+
+         // Remove active de todas as abas
+         document.querySelectorAll('.nav-link').forEach(tab => {
+             tab.classList.remove('active');
+         });
+         document.querySelectorAll('.tab-pane').forEach(pane => {
+             pane.classList.remove('show', 'active');
+         });
+
+         // Adiciona active à aba de histórico
+         historicoTab.classList.add('active');
+         historicoPane.classList.add('show', 'active');
+
+        // Atualiza o histórico para o mês/ano atual
         const hoje = new Date();
         atualizarHistorico(hoje.getMonth() + 1, hoje.getFullYear());
+
     } else {
         document.getElementById('senhaIncorreta').classList.remove('d-none');
     }
 }
 
-        // No DOMContentLoaded, substitua a parte que esconde o histórico por:
-        document.querySelectorAll('#historico .card').forEach(el => {
-            el.style.display = '';
-        });
 
-        // No evento DOMContentLoaded, atualize os listeners - ATUALIZADO
-        document.addEventListener('DOMContentLoaded', function() {
-            // ... (outros listeners permanecem) ...
-            
-            // Adiciona evento ao botão de verificação de senha - ATUALIZADO
-            document.getElementById('btnAcessarHistorico').addEventListener('click', verificarSenhaHistorico);
-            
-            document.getElementById('historico-tab').addEventListener('click', function(e) {
-            if (!historicoAutenticado) {
-                e.preventDefault();
-                
-                // Reseta o modal
-                document.getElementById('inputSenhaHistorico').value = '';
-                document.getElementById('senhaIncorreta').classList.add('d-none');
-                
-                const modal = new bootstrap.Modal(document.getElementById('modalSenhaHistorico'));
-                modal.show();
-            } else {
-                // Se já autenticado, apenas atualiza o histórico
-                const hoje = new Date();
-                atualizarHistorico(hoje.getMonth() + 1, hoje.getFullYear());
+function atualizarTemposContinuamente() {
+    // Limpa qualquer intervalo anterior para evitar duplicação
+    if (intervalos.atualizacaoTempos) {
+        clearInterval(intervalos.atualizacaoTempos);
+    }
+
+    intervalos.atualizacaoTempos = setInterval(() => {
+        // Atualiza os carregamentos em andamento
+        Object.keys(carregamentosEmAndamento).forEach(key => {
+            const carregamento = carregamentosEmAndamento[key];
+            if (!carregamento.finalizado) {
+                const tempoDecorrido = Math.floor((new Date().getTime() - carregamento.inicio) / 60000); // em minutos
+
+                // Atualiza o tempo exibido na aba Operação
+                const elementoOperacao = document.querySelector(`.carregamento-${key} .tempo-decorrido`);
+                if (elementoOperacao) {
+                    const tempoRestante = TEMPO_LIMITE_MINUTOS - tempoDecorrido;
+                    const tempoRestanteTexto = tempoRestante >= 0 ?
+                        `${tempoRestante} minutos restantes` :
+                        `Estourou em ${Math.abs(tempoRestante)} minutos`;
+
+                    elementoOperacao.innerHTML = `Tempo: ${tempoDecorrido} minutos<br>Tempo Restante (2:20h): ${tempoRestanteTexto}`;
+
+                    // Atualiza a classe conforme o tempo
+                    elementoOperacao.className = 'tempo-decorrido ' +
+                        (tempoDecorrido > 120 ? 'time-critical' : // Mais de 2h
+                         tempoDecorrido > 90 ? 'time-warning' : // Mais de 1h30
+                         'time-normal');
+                }
+
+                 // Atualiza o tempo exibido no Dashboard (barra de progresso)
+                 // A atualização da barra de progresso é feita na função atualizarDashboard
+                 // que já escuta as mudanças em tempo real.
+                 // Não precisamos duplicar essa lógica aqui.
             }
         });
-                    
-            // Permite submeter a senha com Enter - ATUALIZADO
-            document.getElementById('inputSenhaHistorico').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    verificarSenhaHistorico();
-                }
-            });
 
-            // Oculta todo o conteúdo do histórico inicialmente
-            document.querySelectorAll('#historico > *').forEach(el => {
-                el.style.display = 'none';
-            });
+        // Atualiza também os tempos nas docas (visível na aba Docas)
+        const docas = document.querySelectorAll('.doca-container');
+        docas.forEach(doca => {
+            const inicio = doca.dataset.inicio;
+            if (inicio) {
+                 const tempo = Math.floor((new Date().getTime() - parseInt(inicio)) / 60000);
+                 const elemento = doca.querySelector('.tempo-doca');
+                 if (elemento) {
+                     elemento.textContent = `${tempo}`; // Tempo decorrido em minutos
+                 }
+            }
         });
-        
 
-        function atualizarTemposContinuamente() {
-        setInterval(() => {
-            // Atualiza os carregamentos em andamento
-            Object.keys(carregamentosEmAndamento).forEach(key => {
-                const carregamento = carregamentosEmAndamento[key];
-                if (!carregamento.finalizado) {
-                    const tempoDecorrido = Math.floor((new Date().getTime() - carregamento.inicio) / 60000);
-                    
-                    // Atualiza o tempo exibido
-                    const elemento = document.querySelector(`.carregamento-${key} .tempo-decorrido`);
-                    if (elemento) {
-                        elemento.textContent = `${tempoDecorrido} minutos`;
-                        
-                        // Atualiza a classe conforme o tempo
-                        elemento.className = 'tempo-decorrido ' + 
-                            (tempoDecorrido > 90 ? 'time-critical' : 
-                            tempoDecorrido > 60 ? 'time-warning' : 'time-normal');
-                    }
+    }, 1000); // Atualiza a cada segundo para a contagem regressiva mais precisa
+}
+
+
+// Busca um funcionário pelo ID
+function buscarFuncionario(id, mostrarModal = false) {
+    return new Promise((resolve, reject) => {
+        funcionariosRef.child(id).once('value', (snapshot) => {
+            const funcionario = snapshot.val();
+
+            if (!funcionario) {
+                if (mostrarModal) {
+                   // Se pediu para mostrar modal e não encontrou, informa
+                   alert('Funcionário não encontrado!');
                 }
-            });
-            
-            // Atualiza também os tempos nas docas
-            const docas = document.querySelectorAll('.doca-container');
-            docas.forEach(doca => {
-                const inicio = doca.dataset.inicio;
-                if (inicio) {
-                    const tempo = Math.floor((new Date().getTime() - parseInt(inicio)) / 60000);
-                    const elemento = doca.querySelector('.tempo-doca');
-                    if (elemento) {
-                        elemento.textContent = `${tempo}`;
-                    }
-                }
-            });
-        }, 60000); // Atualiza a cada minuto
-    }
+                reject('Funcionário não encontrado');
+                return;
+            }
 
+            if (mostrarModal) {
+                mostrarDetalhesFuncionario(id, funcionario);
+            }
 
-        
-        // Busca um funcionário pelo ID
-        function buscarFuncionario(id, mostrarModal = false) {
-            return new Promise((resolve, reject) => {
-                funcionariosRef.child(id).once('value', (snapshot) => {
-                    const funcionario = snapshot.val();
-                    
-                    if (!funcionario) {
-                        alert('Funcionário não encontrado!');
-                        reject('Funcionário não encontrado');
-                        return;
-                    }
-                    
-                    if (mostrarModal) {
-                        mostrarDetalhesFuncionario(id, funcionario);
-                    }
-                    
-                    resolve(funcionario);
-                });
-            });
-        }
-        
-        // Mostra os detalhes do funcionário em um modal
-        function mostrarDetalhesFuncionario(id, funcionario) {
-        // Busca os carregamentos do funcionário
-        carregamentosRef.orderByChild('funcionarioId').equalTo(id).once('value', (snapshot) => {
-            const carregamentos = snapshot.val() || {};
-            const carregamentosArray = Object.values(carregamentos);
-            
-            carregamentosArray.sort((a, b) => (b.inicio || 0) - (a.inicio || 0));
-            
-            let html = `
-                <div class="row">
-                    <div class="col-md-4">
-                        <h4><span class="codigo-funcionario">${id}</span></h4>
-                        <p><strong>Nome:</strong> ${funcionario.nome || 'Não informado'}</p>
-                        <p><strong>Cargo:</strong> ${funcionario.cargo || 'Não informado'}</p>
-                        <p><strong>Total de Carregamentos:</strong> ${carregamentosArray.length}</p>
-                        <div class="mt-3">
-                            <canvas id="qrCodeModal"></canvas>
-                        </div>
-                        <div class="mt-3">
-                            <button id="btnDeletarFuncionario" class="btn btn-danger">
-                                <i class="bi bi-trash"></i> Apagar Funcionário
-                            </button>
-                        </div>
+            resolve(funcionario);
+        });
+    });
+}
+
+// Mostra os detalhes do funcionário em um modal
+function mostrarDetalhesFuncionario(id, funcionario) {
+    // Busca os carregamentos do funcionário (principal ou auxiliar)
+    carregamentosRef.orderByChild('inicio').once('value', (snapshot) => {
+        const carregamentos = snapshot.val() || {};
+         // Filtra carregamentos onde o funcionário participou (verificando na nova estrutura 'participantes')
+        const carregamentosFuncionario = Object.entries(carregamentos)
+            .filter(([key, c]) => c.participantes && c.participantes[id])
+            .map(([key, c]) => ({ key, ...c })); // Adiciona a chave
+
+        carregamentosFuncionario.sort((a, b) => (b.inicio || 0) - (a.inicio || 0)); // Ordena por data decrescente
+
+        let html = `
+            <div class="row">
+                <div class="col-md-4">
+                    <h4><span class="codigo-funcionario">${id}</span></h4>
+                    <p><strong>Nome:</strong> ${funcionario.nome || 'Não informado'}</p>
+                    <p><strong>Cargo:</strong> ${funcionario.cargo || 'Não informado'}</p>
+                    <p><strong>Total de Carregamentos Participados:</strong> ${carregamentosFuncionario.length}</p>
+                    <div class="mt-3">
+                        <canvas id="qrCodeModal"></canvas>
                     </div>
-                    <div class="col-md-8">
-                        <h5>Últimos Carregamentos</h5>
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Data</th>
-                                        <th>DT</th>
-                                        <th>Tempo</th>
-                                        <th>Status</th>
-                                        <th>Doca</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-            `;
-            
-            const carregamentosExibir = carregamentosArray.slice(0, 5);
-            
-            carregamentosExibir.forEach(carregamento => {
-                const inicio = carregamento.inicio ? new Date(carregamento.inicio).toLocaleString() : 'N/A';
-                const fim = carregamento.fim ? new Date(carregamento.fim).toLocaleString() : 'N/A';
-                const tempo = carregamento.fim ? `${((carregamento.fim - carregamento.inicio) / 60000).toFixed(2)} min` : 'Em andamento';
-                const status = carregamento.finalizado ? 'Finalizado' : 'Em andamento';
-                const doca = carregamento.doca || 'N/A';
-                
-                html += `
-                    <tr>
-                        <td>${inicio.split(',')[0]}</td>
-                        <td>${carregamento.placa || 'N/A'}</td>
-                        <td>${tempo}</td>
-                        <td>${status}</td>
-                        <td>${doca}</td>
-                    </tr>
-                `;
-            });
-            
-            html += `
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="mt-3">
+                        <button id="btnDeletarFuncionario" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Apagar Funcionário
+                        </button>
                     </div>
                 </div>
+                <div class="col-md-8">
+                    <h5>Últimos Carregamentos Participados</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>DT</th>
+                                    <th>Tempo Total Carreg.</th>
+                                    <th>Tempo Participação</th> <!-- Novo campo -->
+                                    <th>Status</th>
+                                    <th>Doca</th>
+                                     <th>Valor Est. Ganho</th> <!-- Novo campo -->
+                                </tr>
+                            </thead>
+                            <tbody>
+        `;
+
+        const carregamentosExibir = carregamentosFuncionario.slice(0, 10); // Mostra mais no modal
+
+        carregamentosExibir.forEach(carregamento => {
+            const inicioCarregamento = carregamento.inicio ? new Date(carregamento.inicio).toLocaleDateString() : 'N/A';
+            const fimCarregamento = carregamento.fim ? new Date(carregamento.fim) : null;
+            const tempoTotalCarregamento = fimCarregamento ? `${((fimCarregamento.getTime() - carregamento.inicio) / 60000).toFixed(2)} min` : 'Em andamento';
+
+            const participacao = carregamento.participantes[id];
+            const entrada = new Date(participacao.entrada);
+            const saida = participacao.saida ? new Date(participacao.saida) : (carregamento.finalizado ? fimCarregamento : new Date()); // Usa fim se finalizado, senão agora
+            const tempoParticipacao = `${((saida.getTime() - entrada.getTime()) / 60000).toFixed(2)} min`;
+
+            const status = carregamento.finalizado ? 'Finalizado' : 'Em andamento';
+            const doca = carregamento.doca || 'N/A';
+
+            // Calcula o valor estimado ganho neste carregamento
+            const valorGanho = calcularValorParcial(participacao.entrada, participacao.saida, carregamento.inicio, carregamento.fim);
+
+
+            html += `
+                <tr>
+                    <td>${inicioCarregamento}</td>
+                    <td>${carregamento.placa || 'N/A'}</td>
+                    <td>${tempoTotalCarregamento}</td>
+                    <td>${tempoParticipacao}</td>
+                    <td>${status}</td>
+                    <td>${doca}</td>
+                    <td>R$ ${valorGanho.toFixed(2).replace('.', ',')}</td>
+                </tr>
             `;
-            
-            document.getElementById('modalFuncionarioTitle').textContent = `Detalhes: ${funcionario.nome || id}`;
-            document.getElementById('modalFuncionarioBody').innerHTML = html;
-            
-            // Gera QR code no modal
-            gerarQRCode(id, 'qrCodeModal');
-            
-            const modal = new bootstrap.Modal(document.getElementById('modalFuncionario'));
-            modal.show();
-            
-            // Adiciona evento ao botão de deletar
-            document.getElementById('btnDeletarFuncionario').addEventListener('click', function() {
-                if (confirm(`Tem certeza que deseja apagar o funcionário ${funcionario.nome} (${id})? Esta ação não pode ser desfeita!`)) {
-                    // Remove o funcionário do banco de dados
-                    funcionariosRef.child(id).remove()
-                        .then(() => {
-                            alert('Funcionário apagado com sucesso!');
-                            modal.hide();
-                        })
-                        .catch(error => {
-                            alert('Erro ao apagar funcionário: ' + error.message);
-                        });
+        });
+
+        html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('modalFuncionarioTitle').textContent = `Detalhes: ${funcionario.nome || id}`;
+        document.getElementById('modalFuncionarioBody').innerHTML = html;
+
+        // Gera QR code no modal
+        gerarQRCode(id, 'qrCodeModal');
+
+        const modal = new bootstrap.Modal(document.getElementById('modalFuncionario'));
+        modal.show();
+
+        // Adiciona evento ao botão de deletar
+        document.getElementById('btnDeletarFuncionario').addEventListener('click', function() {
+            if (confirm(`Tem certeza que deseja apagar o funcionário ${funcionario.nome} (${id})? Esta ação não pode ser desfeita!`)) {
+                // Remove o funcionário do banco de dados
+                funcionariosRef.child(id).remove()
+                    .then(() => {
+                        alert('Funcionário apagado com sucesso!');
+                        modal.hide();
+                    })
+                    .catch(error => {
+                        alert('Erro ao apagar funcionário: ' + error.message);
+                    });
+            }
+        });
+    });
+}
+
+    // Calcula o valor parcial ganho por um funcionário em um carregamento
+    // baseando-se no tempo que ele permaneceu no carregamento em relação ao tempo total de carregamento.
+    // O valor calculado não pode ultrapassar VALOR_POR_COLABORADOR_POR_CARREGAMENTO.
+    function calcularValorParcial(entradaFuncionario, saidaFuncionario, inicioCarregamento, fimCarregamento) {
+        const inicio = inicioCarregamento;
+        const fim = fimCarregamento || new Date().getTime(); // Se o carregamento não finalizou, usa o tempo atual como fim
+
+        const tempoTotalCarregamentoMs = fim - inicio;
+        const tempoPermanenciaFuncionarioMs = (saidaFuncionario || fim) - entradaFuncionario; // Usa fim se saida for null
+
+        // Evita divisão por zero se o carregamento teve duração zero (improvável, mas seguro)
+        if (tempoTotalCarregamentoMs <= 0) {
+            return 0;
+        }
+
+        // Calcula a proporção do tempo que o funcionário ficou no carregamento
+        const proporcaoTempo = tempoPermanenciaFuncionarioMs / tempoTotalCarregamentoMs;
+
+        // O valor parcial é a proporção do tempo * o valor total que ele ganharia por um carregamento completo
+        let valorGanho = proporcaoTempo * VALOR_POR_COLABORADOR_POR_CARREGAMENTO;
+
+        // Limita o valor ganho ao valor máximo por carregamento
+        valorGanho = Math.min(VALOR_POR_COLABORADOR_POR_CARREGAMENTO, valorGanho);
+
+        // Garante que o valor não seja negativo (caso de datas inconsistentes)
+        return Math.max(0, valorGanho);
+    }
+
+
+    // Função para remover um funcionário de um carregamento em andamento e calcular o pagamento parcial
+    // Retorna uma Promise que resolve quando a remoção e o cálculo parcial estiverem completos
+    function removerFuncionarioDeCarregamento(funcionarioId, carregamentoKey, timestampSaida) {
+        return new Promise((resolve, reject) => {
+            carregamentosRef.child(carregamentoKey).once('value', (snapshot) => {
+                const carregamento = snapshot.val();
+
+                // Verifica se o carregamento existe, não está finalizado e se o funcionário está participando ativamente
+                if (!carregamento || carregamento.finalizado || !carregamento.participantes || !carregamento.participantes[funcionarioId] || carregamento.participantes[funcionarioId].saida) {
+                    // Funcionário não encontrado neste carregamento, carregamento já finalizado,
+                    // ou funcionário já saiu. Considera como removido para continuar o fluxo.
+                    resolve();
+                    return;
                 }
+
+                // Verifica se é o último funcionário ativo
+                const numParticipantesAtivos = Object.values(carregamento.participantes).filter(p => !p.saida).length;
+
+                // Se é o último participante ativo e é ele que está sendo removido
+                if (numParticipantesAtivos <= 1 && carregamento.participantes[funcionarioId] && !carregamento.participantes[funcionarioId].saida) {
+                     reject(`Não é possível remover o último funcionário (${carregamento.participantes[funcionarioId].nome || funcionarioId}) de um carregamento em andamento.`);
+                     return; // Interrompe a execução da promise
+                }
+
+
+                // Calcula o pagamento parcial antes de definir a data de saída
+                const entrada = carregamento.participantes[funcionarioId].entrada;
+                // Usa o timestampSaida como fim temporário para o cálculo parcial, pois o carregamento ainda não finalizou
+                const valorParcial = calcularValorParcial(entrada, timestampSaida, carregamento.inicio, timestampSaida);
+
+                // Atualiza a data de saída do funcionário no carregamento
+                const updates = {};
+                updates[`participantes/${funcionarioId}/saida`] = timestampSaida;
+
+                carregamentosRef.child(carregamentoKey).update(updates)
+                    .then(() => {
+                        console.log(`Funcionário ${funcionarioId} removido de ${carregamentoKey}. Valor parcial calculado: R$ ${valorParcial.toFixed(2)}`);
+                        resolve(); // Remoção e cálculo parcial concluídos
+                    })
+                    .catch(error => {
+                        console.error("Erro ao remover funcionário e calcular parcial:", error);
+                        reject("Erro ao remover funcionário e calcular parcial.");
+                    });
             });
         });
     }
-        
-        // Busca carregamento em andamento de um funcionário
-        function buscarCarregamentoEmAndamento(funcionarioId) {
-            carregamentosRef.orderByChild('funcionarioId').equalTo(funcionarioId).once('value', (snapshot) => {
+
+    // Busca todos os carregamentos em andamento de um ou mais funcionários
+    function buscarCarregamentosEmAndamentoPorFuncionarios(funcionarioIds) {
+        return new Promise((resolve, reject) => {
+             carregamentosRef.orderByChild('finalizado').equalTo(false).once('value', (snapshot) => {
+                 const carregamentos = snapshot.val() || {};
+                 const carregamentosEncontrados = [];
+
+                 Object.entries(carregamentos).forEach(([key, carregamento]) => {
+                     if (carregamento.participantes) {
+                         const participantesNoCarregamento = Object.keys(carregamento.participantes);
+                         // Verifica se *qualquer* dos funcionarioIds está participando ativamente (saida: null) deste carregamento
+                         const anyMatch = funcionarioIds.some(id => participantesNoCarregamento.includes(id) && carregamento.participantes[id] && !carregamento.participantes[id].saida);
+
+                         if (anyMatch) {
+                             carregamentosEncontrados.push({ key, ...carregamento });
+                         }
+                     }
+                 });
+                 resolve(carregamentosEncontrados);
+             }, reject);
+        });
+    }
+
+
+    // Remove funcionários de carregamentos anteriores antes de iniciar/adicionar
+    function removerFuncionariosDeCarregamentosAnteriores(funcionarioIds) {
+        const timestampSaida = new Date().getTime();
+        const promises = [];
+
+        return buscarCarregamentosEmAndamentoPorFuncionarios(funcionarioIds)
+            .then(carregamentosAnteriores => {
+                carregamentosAnteriores.forEach(carregamento => {
+                    funcionarioIds.forEach(id => {
+                        // Apenas remove se o funcionário estiver participando ativamente deste carregamento
+                        if (carregamento.participantes && carregamento.participantes[id] && !carregamento.participantes[id].saida) {
+                             promises.push(removerFuncionarioDeCarregamento(id, carregamento.key, timestampSaida));
+                        }
+                    });
+                });
+                return Promise.all(promises); // Espera todas as remoções parciais
+            });
+    }
+
+
+    // Inicia um novo carregamento
+    function iniciarCarregamento() {
+        // Pega todos os inputs de funcionário
+        const funcionarioInputs = document.querySelectorAll('#carregadoresContainer .funcionario-input');
+        const todosParticipantesIds = Array.from(funcionarioInputs)
+            .map(input => input.value.trim())
+            .filter(id => id); // Remove IDs vazios
+
+        const placa = document.getElementById('placaCaminhao').value.trim().toUpperCase();
+        const doca = document.getElementById('docaNumero').value;
+
+        if (todosParticipantesIds.length === 0 || !placa || !doca) {
+            alert('Preencha pelo menos um funcionário, DT e Doca!');
+            return;
+        }
+
+        const timestampEntrada = new Date().getTime();
+        let funcionariosComNome = {}; // Para armazenar nomes para a nova estrutura
+
+        // Verifica se todos os funcionários existem e busca os nomes
+        const buscaFuncionariosPromises = todosParticipantesIds.map(id =>
+            buscarFuncionario(id)
+                .then(func => {
+                    funcionariosComNome[id] = func.nome || id; // Armazena nome ou ID se não encontrar
+                    return func; // Retorna o objeto funcionário
+                })
+                .catch(() => {
+                    alert(`Funcionário ${id} não encontrado! Verifique o código.`);
+                    throw new Error(`Funcionário ${id} não encontrado`); // Interrompe a cadeia de promessas
+                })
+        );
+
+        Promise.all(buscaFuncionariosPromises)
+            .then(() => {
+                 // Remove funcionários de carregamentos anteriores
+                 return removerFuncionariosDeCarregamentosAnteriores(todosParticipantesIds);
+            })
+            .then(() => {
+                // Verifica se a doca está disponível
+                return docasRef.child(doca).once('value');
+            })
+            .then((snapshot) => {
+                const docaStatus = snapshot.val();
+
+                if (docaStatus && docaStatus.ocupada) {
+                    alert(`Doca ${doca} já está ocupada!`);
+                    throw new Error('Doca ocupada'); // Interrompe a cadeia de promessas
+                }
+
+                // Cria o objeto de carregamento com a nova estrutura de participantes
+                const participantes = {};
+                todosParticipantesIds.forEach(id => {
+                    participantes[id] = {
+                        nome: funcionariosComNome[id], // Usa o nome encontrado
+                        entrada: timestampEntrada,
+                        saida: null // Ainda no carregamento
+                    };
+                });
+
+                const carregamento = {
+                    placa,
+                    doca,
+                    inicio: timestampEntrada,
+                    fim: null, // Ainda não finalizado
+                    finalizado: false,
+                    participantes: participantes
+                };
+
+                // Salva no Firebase
+                const newKey = carregamentosRef.push().key;
+                return carregamentosRef.child(newKey).set(carregamento)
+                    .then(() => {
+                         // Atualiza status da doca
+                        return docasRef.child(doca).set({
+                            ocupada: true,
+                            placa,
+                            inicio: carregamento.inicio // Armazena o tempo de início na doca também
+                        });
+                    });
+            })
+            .then(() => {
+                 // Limpa o formulário
+                document.getElementById('formContainer').style.display = 'none';
+                document.querySelectorAll('.funcionario-input').forEach(input => input.value = '');
+                 // Remove carregadores adicionais, exceto o primeiro
+                const carregadoresContainer = document.getElementById('carregadoresContainer');
+                while (carregadoresContainer.children.length > 1) {
+                    carregadoresContainer.removeChild(carregadoresContainer.lastChild);
+                }
+
+                alert('Carregamento iniciado com sucesso!');
+            })
+            .catch((error) => {
+                 // Trata erros específicos (funcionário não encontrado, doca ocupada) ou erros gerais
+                 if (error.message !== 'Doca ocupada' && !error.message.startsWith('Funcionário')) {
+                    console.error("Erro ao iniciar carregamento:", error);
+                    alert('Erro ao iniciar carregamento.');
+                 }
+            });
+    }
+
+    // Finaliza um carregamento
+    function finalizarCarregamento() {
+        const funcionarioInputs = document.querySelectorAll('#carregadoresContainer .funcionario-input');
+        const funcionarioId = funcionarioInputs[0].value.trim(); // Pega o ID do primeiro input
+
+        if (!funcionarioId) {
+            alert('Informe o código do funcionário que está finalizando o carregamento!');
+            return;
+        }
+
+        // Busca carregamento em andamento onde este funcionário participa (verificando na nova estrutura 'participantes')
+        carregamentosRef.orderByChild('finalizado').equalTo(false) // Busca apenas carregamentos não finalizados
+            .once('value', (snapshot) => {
                 const carregamentos = snapshot.val() || {};
-                const carregamentoEmAndamento = Object.values(carregamentos).find(c => c.inicio && !c.finalizado);
-                
-                if (carregamentoEmAndamento) {
-                    document.getElementById('placaCaminhao').value = carregamentoEmAndamento.placa || '';
+                let carregamentoEmAndamento = null;
+                let carregamentoKey = null;
+
+                 // Procura por carregamentos em andamento onde o funcionário participa
+                Object.entries(carregamentos).forEach(([key, c]) => {
+                     if (c.participantes && c.participantes[funcionarioId] && !c.participantes[funcionarioId].saida) {
+                         carregamentoEmAndamento = c;
+                         carregamentoKey = key;
+                         // Se encontrar um, pode parar (assumindo que um funcionário só finaliza um por vez)
+                         return false; // Para o loop do forEach
+                     }
+                 });
+
+
+                if (carregamentoEmAndamento && carregamentoKey) {
+                     // Confirmação extra
+                    if (!confirm(`Tem certeza que deseja finalizar o carregamento DT: ${carregamentoEmAndamento.placa || 'N/A'} na Doca: ${carregamentoEmAndamento.doca || 'N/A'}?`)) {
+                        return; // Usuário cancelou
+                    }
+                    finalizarCarregamentoFirebase(carregamentoKey, carregamentoEmAndamento);
+
                 } else {
                     alert('Nenhum carregamento em andamento encontrado para este funcionário!');
-                    document.getElementById('funcionarioId').value = '';
+                     // Limpa o campo do funcionário mesmo se não encontrar
+                    funcionarioInputs[0].value = '';
                 }
             });
+    }
+
+    // Função auxiliar para finalizar no Firebase
+    function finalizarCarregamentoFirebase(key, carregamento) {
+        const timestampFim = new Date().getTime();
+        const updates = {
+            fim: timestampFim,
+            finalizado: true
+        };
+
+        // Para todos os participantes que ainda estão ativos (`saida: null`), defina a data de saída como a data de fim do carregamento
+        if (carregamento.participantes) {
+             Object.entries(carregamento.participantes).forEach(([id, participacao]) => {
+                 if (!participacao.saida) {
+                     updates[`participantes/${id}/saida`] = timestampFim;
+                 }
+             });
         }
-        
-        // Atualiza o dashboard em tempo real
-        function atualizarDashboard() {
-            // Atualiza carregamentos em andamento
-            carregamentosRef.orderByChild('finalizado').equalTo(false).on('value', (snapshot) => {
-                const carregamentos = snapshot.val() || {};
-                carregamentosEmAndamento = carregamentos;
-                
-                // Atualiza a lista na aba principal
-                let html = '';
-                Object.keys(carregamentos).forEach(key => {
-                    const carregamento = carregamentos[key];
-                    const tempoDecorrido = Math.floor((new Date().getTime() - carregamento.inicio) / 60000); // em minutos
-                    
-                    // Define a classe com base no tempo decorrido
-                    let tempoClass = 'time-normal';
-                    if (tempoDecorrido > 90) tempoClass = 'time-critical';
-                    else if (tempoDecorrido > 60) tempoClass = 'time-warning';
-                    
-                    // Lista de carregadores
-                    let carregadoresHtml = '';
-                    if (carregamento.carregadores && carregamento.carregadores.length > 0) {
-                        carregadoresHtml = '<div class="mt-2"><strong>Carregadores:</strong><ul class="list-unstyled">';
-                        carregamento.carregadores.forEach(c => {
-                            carregadoresHtml += `<li>${c}</li>`;
-                        });
-                        carregadoresHtml += '</ul></div>';
-                    }
-                    
-                    // Dentro da função atualizarDashboard(), modifique a criação do HTML:
-                    html += `
-                        <div class="card card-carregamento em-andamento mb-2 carregamento-${key}">
-                            <div class="card-body">
-                                <h6 class="card-title">DT: ${carregamento.placa || 'N/A'}</h6>
-                                <p class="card-text">Doca: ${carregamento.doca || 'N/A'}</p>
-                                <p class="card-text">Principal: ${carregamento.funcionarioId}</p>
-                                ${carregadoresHtml}
-                                <p class="card-text tempo-decorrido ${tempoClass}">Tempo: ${tempoDecorrido} minutos</p>
-                                <p class="card-text">Início: ${new Date(carregamento.inicio).toLocaleTimeString()}</p>
-                            </div>
+
+
+        carregamentosRef.child(key).update(updates)
+            .then(() => {
+                // Libera a doca associada a este carregamento
+                if (carregamento.doca) {
+                     docasRef.child(carregamento.doca).update({
+                         ocupada: false,
+                         placa: '',
+                         inicio: null
+                     });
+                }
+
+                // Limpa o formulário
+                document.getElementById('formContainer').style.display = 'none';
+                document.querySelectorAll('#carregadoresContainer .funcionario-input').forEach(input => input.value = '');
+                 // Remove carregadores adicionais, exceto o primeiro
+                const carregadoresContainer = document.getElementById('carregadoresContainer');
+                while (carregadoresContainer.children.length > 1) {
+                    carregadoresContainer.removeChild(carregadoresContainer.lastChild);
+                }
+
+
+                alert('Carregamento finalizado com sucesso!');
+            })
+            .catch(error => {
+                console.error("Erro ao finalizar carregamento:", error);
+                alert('Erro ao finalizar carregamento.');
+            });
+    }
+
+    // Preenche o select de carregamentos em andamento
+    function preencherSelectCarregamentos() {
+        const select = document.getElementById('carregamentoDestino');
+        select.innerHTML = '<option value="">Selecione um carregamento em andamento</option>'; // Reseta as opções
+
+         carregamentosRef.orderByChild('finalizado').equalTo(false).once('value', (snapshot) => {
+             const carregamentos = snapshot.val() || {};
+             Object.entries(carregamentos).forEach(([key, carregamento]) => {
+                 const option = document.createElement('option');
+                 option.value = key; // O valor será a chave do carregamento
+                 option.textContent = `Doca ${carregamento.doca || 'N/A'} - DT ${carregamento.placa || 'N/A'}`;
+                 select.appendChild(option);
+             });
+         });
+    }
+
+    // Adiciona um funcionário a um carregamento existente
+    function addFuncionarioToCarregamento() {
+        const funcionarioId = document.getElementById('addFuncionarioId').value.trim();
+        const carregamentoKey = document.getElementById('carregamentoDestino').value;
+
+        if (!funcionarioId || !carregamentoKey) {
+            alert('Informe o funcionário e selecione o carregamento!');
+            return;
+        }
+
+        const timestampEntrada = new Date().getTime();
+        let funcionarioNome = funcionarioId; // Placeholder para o nome
+
+        // Verifica se o funcionário existe e busca o nome
+        buscarFuncionario(funcionarioId)
+            .then(func => {
+                funcionarioNome = func.nome || funcionarioId;
+                // Remove o funcionário de carregamentos anteriores em andamento
+                 return removerFuncionariosDeCarregamentosAnteriores([funcionarioId]);
+            })
+            .then(() => {
+                // Busca o carregamento selecionado
+                return carregamentosRef.child(carregamentoKey).once('value');
+            })
+            .then(snapshot => {
+                const carregamento = snapshot.val();
+
+                if (!carregamento || carregamento.finalizado) {
+                     alert('Carregamento selecionado inválido ou já finalizado.');
+                     return;
+                }
+
+                // Verifica se o funcionário já está participando ATIVAMENTE deste carregamento
+                 // (já foi removido de carregamentos anteriores, mas pode ter saído e entrado de novo)
+                 if (carregamento.participantes && carregamento.participantes[funcionarioId] && !carregamento.participantes[funcionarioId].saida) {
+                      alert('Este funcionário já está participando deste carregamento.');
+                     return;
+                 }
+
+
+                // Adiciona o funcionário à lista de participantes com a data de entrada
+                const updates = {};
+                updates[`participantes/${funcionarioId}`] = {
+                    nome: funcionarioNome,
+                    entrada: timestampEntrada,
+                    saida: null // Entrando agora
+                };
+
+                return carregamentosRef.child(carregamentoKey).update(updates);
+            })
+            .then(() => {
+                alert('Funcionário adicionado ao carregamento com sucesso!');
+                hideAllForms(); // Esconde o formulário
+                 document.getElementById('addFuncionarioId').value = ''; // Limpa o campo
+                 document.getElementById('carregamentoDestino').value = ''; // Limpa o select
+            })
+            .catch(error => {
+                console.error("Erro ao adicionar funcionário ao carregamento:", error);
+                 // Se o erro veio de removerFuncionariosDeCarregamentosAnteriores (último funcionário)
+                 if (typeof error === 'string' && error.startsWith('Não é possível remover o último funcionário')) {
+                     alert(error); // Exibe a mensagem específica
+                 } else {
+                    alert('Erro ao adicionar funcionário ao carregamento.');
+                 }
+            });
+    }
+
+    // Remove um funcionário de um carregamento em andamento (acionado pelo botão "X")
+    function handleRemoveFuncionario(event) {
+        const button = event.target.closest('.btn-remove-funcionario');
+        const carregamentoKey = button.dataset.carregamentoKey;
+        const funcionarioId = button.dataset.funcionarioId;
+        const funcionarioNome = button.dataset.funcionarioNome;
+
+        const timestampSaida = new Date().getTime();
+
+        // Chama a função de remoção genérica, que já inclui a validação do último funcionário
+        removerFuncionarioDeCarregamento(funcionarioId, carregamentoKey, timestampSaida)
+            .then(() => {
+                 alert(`${funcionarioNome} removido do carregamento.`);
+                 // A atualização da lista na interface é automática via listener do Firebase
+            })
+            .catch(error => {
+                 console.error("Erro ao remover funcionário:", error);
+                 // Se o erro veio da validação do último funcionário
+                 if (typeof error === 'string') {
+                     alert(error); // Exibe a mensagem específica
+                 } else {
+                    alert('Erro ao remover funcionário.');
+                 }
+            });
+    }
+
+
+    // Atualiza o dashboard em tempo real
+    function atualizarDashboard() {
+        // Atualiza carregamentos em andamento e funcionários em ação
+        carregamentosRef.orderByChild('finalizado').equalTo(false).on('value', (snapshot) => {
+            const carregamentos = snapshot.val() || {};
+            carregamentosEmAndamento = carregamentos; // Atualiza a variável global
+
+            // Atualiza a lista na aba principal (Operação)
+            let operacaoHtml = '';
+            Object.entries(carregamentos).forEach(([key, carregamento]) => {
+                const tempoDecorrido = Math.floor((new Date().getTime() - carregamento.inicio) / 60000); // em minutos
+
+                // Define a classe com base no tempo decorrido
+                let tempoClass = 'time-normal';
+                if (tempoDecorrido > 120) tempoClass = 'time-critical';
+                else if (tempoDecorrido > 90) tempoClass = 'time-warning';
+
+                // Calcula tempo restante
+                const tempoRestante = TEMPO_LIMITE_MINUTOS - tempoDecorrido;
+                const tempoRestanteTexto = tempoRestante >= 0 ?
+                    `${tempoRestante} minutos restantes` :
+                    `Estourou em ${Math.abs(tempoRestante)} minutos`;
+
+                // Lista de participantes ativos
+                let participantesHtml = '';
+                const participantesAtivos = Object.entries(carregamento.participantes || {})
+                    .filter(([id, p]) => !p.saida); // Filtra apenas quem ainda não saiu
+
+                if (participantesAtivos.length > 0) {
+                     participantesHtml = '<div class="mt-2"><strong>Carregadores:</strong><ul class="list-unstyled mb-0 carregadores-lista-operacao">'; // Adiciona uma classe para facilitar a busca
+                     participantesAtivos.forEach(([id, p]) => {
+                          participantesHtml += `
+                             <li>
+                                 ${p.nome || id}
+                                 <button class="btn btn-outline-danger btn-sm btn-remove-funcionario"
+                                         data-carregamento-key="${key}"
+                                         data-funcionario-id="${id}"
+                                         data-funcionario-nome="${p.nome || id}">
+                                     <i class="bi bi-x"></i>
+                                 </button>
+                             </li>
+                          `;
+                     });
+                     participantesHtml += '</ul></div>'; // Fecha a lista
+                }
+
+
+                operacaoHtml += `
+                    <div class="card card-carregamento em-andamento mb-2 carregamento-${key}">
+                        <div class="card-body">
+                            <h6 class="card-title">DT: ${carregamento.placa || 'N/A'}</h6>
+                            <p class="card-text">Doca: ${carregamento.doca || 'N/A'}</p>
+                            ${participantesHtml}
+                            <p class="card-text tempo-decorrido ${tempoClass}">
+                               Tempo: ${tempoDecorrido} minutos<br>
+                               Tempo Restante (2:20h): ${tempoRestanteTexto}
+                            </p>
+                            <p class="card-text mb-0"><small>Início: ${new Date(carregamento.inicio).toLocaleTimeString()}</small></p>
                         </div>
-                    `;
-                });
-                
-                document.getElementById('carregamentosAndamento').innerHTML = html || '<p>Nenhum carregamento em andamento no momento.</p>';
-                
-                // Atualiza o dashboard
-                let dashboardHtml = '';
-                Object.keys(carregamentos).forEach(key => {
-                    const carregamento = carregamentos[key];
-                    const tempoDecorrido = Math.floor((new Date().getTime() - carregamento.inicio) / 60000); // em minutos
-                    
-                    // Calcula a porcentagem para a barra de progresso (2 horas = 100%)
-                    const porcentagem = Math.min(100, (tempoDecorrido / 120) * 100);
-                    
-                    // Define a cor com base no tempo
-                    let progressClass = 'bg-success';
-                    if (porcentagem > 75) progressClass = 'bg-warning';
-                    if (porcentagem > 90) progressClass = 'bg-danger';
-                    
-                    dashboardHtml += `
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <h6>DT: ${carregamento.placa || 'N/A'}</h6>
-                                <p>Doca: ${carregamento.doca || 'N/A'}</p>
-                                <div class="progress progress-bar-tempo">
-                                    <div class="progress-bar ${progressClass}" 
-                                         role="progressbar" 
-                                         style="width: ${porcentagem}%" 
-                                         aria-valuenow="${porcentagem}" 
-                                         aria-valuemin="0" 
-                                         aria-valuemax="100">
-                                    </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('carregamentosAndamento').innerHTML = operacaoHtml || '<p>Nenhum carregamento em andamento no momento.</p>';
+
+             // Adiciona event listeners aos botões de remover APÓS preencher o HTML
+            document.querySelectorAll('.btn-remove-funcionario').forEach(btn => {
+                btn.removeEventListener('click', handleRemoveFuncionario); // Remove listeners anteriores
+                btn.addEventListener('click', handleRemoveFuncionario); // Adiciona o listener
+            });
+
+
+            // --- Atualiza o Dashboard ---
+            let dashboardHtml = '';
+            const funcionariosEmAcao = {};
+
+            Object.keys(carregamentos).forEach(key => {
+                const carregamento = carregamentos[key];
+                const tempoDecorrido = Math.floor((new Date().getTime() - carregamento.inicio) / 60000); // em minutos
+
+                // Calcula a porcentagem para a barra de progresso (TEMPO_LIMITE_MINUTOS = 100%)
+                const porcentagem = Math.min(100, Math.max(0, (tempoDecorrido / TEMPO_LIMITE_MINUTOS) * 100)); // Garante que fica entre 0 e 100
+
+                // Define a cor com base no tempo
+                let progressClass = 'bg-success';
+                if (porcentagem > 75) progressClass = 'bg-warning';
+                if (porcentagem >= 100) progressClass = 'bg-danger'; // >= 100% (estourou o tempo)
+
+                 // Calcula tempo restante para exibição no dashboard
+                 const tempoRestante = TEMPO_LIMITE_MINUTOS - tempoDecorrido;
+                 const tempoRestanteTexto = tempoRestante >= 0 ?
+                     `${tempoRestante} min restantes` :
+                     `Estourou em ${Math.abs(tempoRestante)} min`;
+
+
+                dashboardHtml += `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6>DT: ${carregamento.placa || 'N/A'}</h6>
+                            <p>Doca: ${carregamento.doca || 'N/A'}</p>
+                            <div class="progress progress-bar-tempo">
+                                <div class="progress-bar ${progressClass}"
+                                     role="progressbar"
+                                     style="width: ${porcentagem}%"
+                                     aria-valuenow="${porcentagem}"
+                                     aria-valuemin="0"
+                                     aria-valuemax="100">
                                 </div>
-                                <small>Tempo: ${tempoDecorrido} minutos</small>
                             </div>
+                            <small>Tempo: ${tempoDecorrido} minutos (${tempoRestanteTexto})</small>
                         </div>
-                    `;
-                });
+                    </div>
+                `;
 
-                document.getElementById('dashboardCarregamentos').innerHTML = dashboardHtml || '<p>Nenhum carregamento em andamento</p>';
-
-                // Atualiza estatísticas gerais
-                const totalCarregamentos = Object.keys(carregamentos).length;
-                document.getElementById('totalCarregamentosHoje').textContent = totalCarregamentos;
-
-                // Atualiza funcionários em ação
-                const funcionariosEmAcao = {};
-                Object.values(carregamentos).forEach(carregamento => {
-                    // Adiciona o funcionário principal
-                    if (!funcionariosEmAcao[carregamento.funcionarioId]) {
-                        funcionariosEmAcao[carregamento.funcionarioId] = {
-                            count: 0,
-                            nome: 'Não encontrado'
-                        };
-                    }
-                    funcionariosEmAcao[carregamento.funcionarioId].count++;
-
-                    // Adiciona os carregadores auxiliares
-                    if (carregamento.carregadores) {
-                        carregamento.carregadores.forEach(carregadorId => {
-                            if (!funcionariosEmAcao[carregadorId]) {
-                                funcionariosEmAcao[carregadorId] = {
-                                    count: 0,
-                                    nome: 'Não encontrado'
-                                };
-                            }
-                            funcionariosEmAcao[carregadorId].count++;
+                // Conta funcionários em ação (apenas os que ainda não saíram)
+                if (carregamento.participantes) {
+                    Object.entries(carregamento.participantes)
+                        .filter(([id, p]) => !p.saida) // Apenas participantes ativos
+                        .forEach(([id, p]) => {
+                            funcionariosEmAcao[id] = (funcionariosEmAcao[id] || 0) + 1; // Conta quantas vezes está em carregamentos ativos
                         });
-                    }
-                });
+                }
+            });
 
-                // Busca os nomes dos funcionários
-                const promises = Object.keys(funcionariosEmAcao).map(funcionarioId => {
-                    return buscarFuncionario(funcionarioId)
-                        .then(funcionario => {
-                            funcionariosEmAcao[funcionarioId].nome = funcionario.nome;
-                        })
-                        .catch(() => {
-                            // Mantém o nome padrão "Não encontrado" se falhar
-                        });
-                });
+            document.getElementById('dashboardCarregamentos').innerHTML = dashboardHtml || '<p>Nenhum carregamento em andamento</p>';
 
-                Promise.all(promises).then(() => {
+            // Atualiza estatísticas gerais do Dashboard (Carregamentos em Andamento)
+            const totalCarregamentos = Object.keys(carregamentos).length;
+            document.getElementById('totalCarregamentosHoje').textContent = totalCarregamentos;
+
+            // Atualiza funcionários em ação no Dashboard
+            const funcionariosEmAcaoIds = Object.keys(funcionariosEmAcao);
+            if (funcionariosEmAcaoIds.length > 0) {
+                const promises = funcionariosEmAcaoIds.map(id => buscarFuncionario(id).then(f => ({ id, nome: f.nome || id })).catch(() => ({ id, nome: id })));
+                Promise.all(promises).then(funcionariosComNome => {
                     let funcionariosHtml = '';
-                    Object.entries(funcionariosEmAcao).forEach(([id, info]) => {
+                    funcionariosComNome.forEach(func => {
                         funcionariosHtml += `
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
-                                    <strong>${info.nome}</strong>
-                                    <small class="text-muted d-block">${id}</small>
+                                    <strong>${func.nome}</strong>
+                                    <small class="text-muted d-block">${func.id}</small>
                                 </div>
-                                <span class="badge bg-primary rounded-pill">${info.count} carreg.</span>
+                                <span class="badge bg-primary rounded-pill">${funcionariosEmAcao[func.id]} carreg.</span>
                             </div>
                         `;
                     });
-
-                    document.getElementById('dashboardFuncionarios').innerHTML = 
-                        funcionariosHtml || '<p>Nenhum funcionário em ação no momento</p>';
+                     document.getElementById('dashboardFuncionarios').innerHTML = funcionariosHtml;
                 });
-            });
-
-            // Atualiza status das docas
-            docasRef.on('value', (snapshot) => {
-                const docas = snapshot.val() || {};
-                let docasHtml = '';
-
-                for (let i = 1; i <= 11; i++) {
-                    const doca = docas[i] || { ocupada: false };
-                    const ocupadaClass = doca.ocupada ? 'doca-ocupada' : '';
-                    const statusText = doca.ocupada ? 'Ocupada 🚚💨' : 'Livre 🚛';
-                    const statusClass = doca.ocupada ? 'text-danger' : 'text-success';
-                    const placa = doca.ocupada ? (doca.placa || 'DT não informada') : '';
-                    const inicio = doca.ocupada && doca.inicio ? 
-                        new Date(doca.inicio).toLocaleTimeString() : '';
-
-                    // Busca o carregamento associado a esta doca
-                    let carregamentoHtml = '';
-                    if (doca.ocupada) {
-                        carregamentosRef.orderByChild('doca').equalTo(i.toString()).once('value', (carregamentoSnapshot) => {
-                            const carregamentos = carregamentoSnapshot.val() || {};
-                            const carregamento = Object.values(carregamentos).find(c => !c.finalizado);
-
-                            if (carregamento) {
-                                // Busca os nomes dos funcionários
-                                const promises = [];
-                                const funcionarios = [carregamento.funcionarioId, ...(carregamento.carregadores || [])];
-                                const nomes = [];
-                                
-                                funcionarios.forEach(funcionarioId => {
-                                    promises.push(
-                                        buscarFuncionario(funcionarioId)
-                                            .then(funcionario => {
-                                                nomes.push(funcionario.nome || funcionarioId);
-                                            })
-                                            .catch(() => {
-                                                nomes.push(funcionarioId);
-                                            })
-                                    );
-                                });
-
-                                Promise.all(promises).then(() => {
-                                    const docaElement = document.querySelector(`.doca-${i} .carregadores-nomes`);
-                                    if (docaElement) {
-                                        docaElement.innerHTML = nomes.join('<br>');
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-                    // Dentro da atualização das docas:
-                docasHtml += `
-                    <div class="col-md-4">
-                        <div class="doca-container ${ocupadaClass} doca-${i}" data-inicio="${doca.inicio || ''}">
-                            <div class="doca-header">Doca ${i}</div>
-                            <p><strong>Status:</strong> <span class="${statusClass}">${statusText}</span></p>
-                            ${doca.ocupada ? `
-                                <p><strong>DT:</strong> ${placa}</p>
-                                <p><strong>Início:</strong> ${inicio}</p>
-                                <p><strong>Tempo:</strong> <span class="tempo-doca">${Math.floor((new Date().getTime() - doca.inicio) / 60000)}</span> min</p>
-                                <p><strong>Carregadores:</strong></p>
-                                <div class="carregadores-nomes">Carregando nomes...</div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-                }
-
-                document.getElementById('docasContainer').innerHTML = docasHtml;
-            });
-        }
-
-        // Atualiza o histórico
-        function atualizarHistorico(mes, ano, funcionarioId = null) {
-            // Mostra spinner de carregamento
-            document.getElementById('tabelaHistorico').innerHTML = `
-        <tr>
-            <td colspan="7" class="text-center">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Carregando...</span>
-                </div>
-            </td>
-        </tr>
-    `;
-            const startDate = new Date(ano, mes - 1, 1).getTime();
-            const endDate = new Date(ano, mes, 0, 23, 59, 59).getTime();
-            
-            let query = carregamentosRef.orderByChild('inicio').startAt(startDate).endAt(endDate);
-            
-            if (funcionarioId) {
-                query = query.orderByChild('funcionarioId').equalTo(funcionarioId);
+            } else {
+                document.getElementById('dashboardFuncionarios').innerHTML = '<p>Nenhum funcionário em ação no momento</p>';
             }
-            
-            // Altere para on() em vez de once() para atualização em tempo real
-            query.on('value', (snapshot) => {
-                const carregamentos = snapshot.val() || {};
-                const carregamentosArray = Object.values(carregamentos).filter(c => c.finalizado);
-                
-                // Ordena por data decrescente
-                carregamentosArray.sort((a, b) => b.inicio - a.inicio);
-                
-                // Atualiza estatísticas
-                atualizarEstatisticasHistorico(carregamentosArray);
-                
-                // Preenche a tabela de histórico
-                preencherTabelaHistorico(carregamentosArray);
-                
-                // Atualiza top funcionários (apenas quando não filtrar por funcionário específico)
-                if (!funcionarioId) {
-                    atualizarTopFuncionarios(carregamentosArray);
+        });
+
+        // Atualiza status das docas
+        docasRef.on('value', (snapshot) => {
+            const docas = snapshot.val() || {};
+            let docasHtml = '';
+            const docasContainer = document.getElementById('docasContainer');
+            docasContainer.innerHTML = ''; // Limpa o container antes de preencher
+
+            for (let i = 1; i <= 11; i++) {
+    const doca = docas[i] || { ocupada: false };
+    const ocupadaClass = doca.ocupada ? 'doca-ocupada' : '';
+    const statusText = doca.ocupada ? 'Ocupada 🚚💨' : 'Livre 🚛';
+    const statusClass = doca.ocupada ? 'text-danger' : 'text-success';
+    const placa = doca.ocupada ? (doca.placa || 'DT não informada') : '';
+    const inicioStr = doca.ocupada && doca.inicio ? String(doca.inicio) : '';
+    const inicio = inicioStr ? new Date(parseInt(inicioStr)).toLocaleTimeString() : '';
+    const tempoDoca = (doca.ocupada && doca.inicio) ? Math.floor((Date.now() - parseInt(doca.inicio)) / 60000) : 0;
+
+    // Se estiver ocupada, busca os carregadores ativos nesta doca
+    if (doca.ocupada) {
+        carregamentosRef
+            .orderByChild('doca')
+            .equalTo(i.toString())
+            .once('value', (carregamentoSnapshot) => {
+                const carregamentos = carregamentoSnapshot.val() || {};
+                const carregamento = Object.entries(carregamentos).find(([key, c]) => !c.finalizado && c.doca == i);
+                if (carregamento && carregamento[1].participantes) {
+                    const [carregamentoKey, carregamentoData] = carregamento;
+                    const participantesAtivosIds = Object.entries(carregamentoData.participantes)
+                        .filter(([id, p]) => !p.saida)
+                        .map(([id]) => id);
+
+                    const promises = participantesAtivosIds.map(id =>
+                        buscarFuncionario(id).then(f => f.nome || id).catch(() => id)
+                    );
+
+                    Promise.all(promises).then(nomes => {
+                        const docaElement = document.querySelector(`.doca-${i} .carregadores-nomes`);
+                        if (docaElement) {
+                            docaElement.innerHTML = nomes.join('<br>');
+                        }
+                    });
+                } else {
+                    const docaElement = document.querySelector(`.doca-${i} .carregadores-nomes`);
+                    if (docaElement) {
+                        docaElement.innerHTML = 'N/A';
+                    }
                 }
             });
-        }
+    }
 
-function atualizarEstatisticasHistorico(carregamentosArray) {
-    const totalCaminhoes = carregamentosArray.length;
-    const tempoTotal = carregamentosArray.reduce((sum, c) => sum + (c.fim - c.inicio), 0);
-    const mediaTempo = totalCaminhoes > 0 ? (tempoTotal / totalCaminhoes / 60000).toFixed(2) : 0;
-    
-    // Calcula o total de colaboradores (1 por funcionário principal + carregadores auxiliares)
-    const totalColaboradores = carregamentosArray.reduce((sum, c) => {
-        return sum + 1 + (c.carregadores ? c.carregadores.length : 0);
-    }, 0);
-    
-    const valorPorColaborador = 2.50; // Valor por pessoa
-    const valorTotal = (totalColaboradores * valorPorColaborador).toFixed(2);
-    
-    document.getElementById('totalCaminhoes').textContent = totalCaminhoes;
-    document.getElementById('mediaTempo').textContent = `${mediaTempo} min`;
-    document.getElementById('valorTotal').textContent = `R$ ${valorTotal}`;
+    // Cria o HTML da doca, incluindo a nova barra de tempo
+    const docaElementHtml = `
+        <div class="col-md-4">
+            <div class="doca-container ${ocupadaClass} doca-${i}" data-inicio="${doca.inicio || ''}">
+                <div class="doca-header">Doca ${i}</div>
+                <p class="mb-1"><strong>Status:</strong> <span class="${statusClass}">${statusText}</span></p>
+                ${doca.ocupada ? `
+                    <p class="mb-1"><strong>DT:</strong> ${placa}</p>
+                    <p class="mb-1"><strong>Início:</strong> ${inicio}</p>
+                    <p class="mb-1"><strong>Tempo:</strong> <span class="tempo-doca">${tempoDoca}</span> min</p>
+                    <p class="mb-1"><strong>Tempo Restante:</strong> <span class="tempo-barra-${i}">0h0min</span> min</p>
+                    <!-- Barra de tempo -->
+                    <div class="progress mb-2" style="height: 20px;">
+                    <div class="progress-bar" id="barraDoca-${i}" role="progressbar" style="width: 100%; background-color: green;">
+                        <!-- Opcional: coloque aqui o texto do tempo restante, se desejar -->
+                        <span class="tempo-barra-${i}"></span>
+                    </div>
+                    </div>
+                    
+                    <p class="mb-1"><strong>Carregadores:</strong></p>
+                    <div class="carregadores-nomes">Carregando nomes...</div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+    docasContainer.innerHTML += docaElementHtml; // Adiciona ao container
+}
+        });
+    }
+
+        function atualizarBarrasTempo() {
+    const limiteMinutos = 140; // 2h20min
+    const avisoAmareloMinutos = 40; // intervalo para mudar para amarelo
+
+    for (let i = 1; i <= 11; i++) {
+        const barra = document.getElementById(`barraDoca-${i}`);
+        const docaDiv = document.querySelector(`.doca-${i}`);
+        const tempoSpan = document.querySelector(`.tempo-barra-${i}`);
+        if (barra && docaDiv && tempoSpan) {
+            const inicioStr = docaDiv.dataset.inicio;
+            if (inicioStr) {
+                const inicioMs = parseInt(inicioStr);
+                const tempoMs = Date.now() - inicioMs;
+                const tempoMin = Math.floor(tempoMs / 60000);
+                const tempoRestanteMin = limiteMinutos - tempoMin;
+
+                // Calcula porcentagem
+                let porcentagem = (tempoMin / limiteMinutos) * 100;
+                porcentagem = Math.min(Math.max(porcentagem, 0), 100);
+
+                // Determina cor da barra
+                if (tempoRestanteMin > avisoAmareloMinutos) {
+                    barra.className = 'progress-bar bg-success';
+                } else if (tempoRestanteMin > 0) {
+                    barra.className = 'progress-bar bg-warning';
+                } else {
+                    barra.className = 'progress-bar bg-danger';
+                }
+
+                // Atualiza a largura da barra
+                if (tempoRestanteMin >= 0) {
+                    barra.style.width = porcentagem + '%';
+                    // Atualiza o texto do tempo restante
+                    tempoSpan.textContent = formatarTempo(tempoRestanteMin);
+                } else {
+                    // Tempo negativo (atraso)
+                    const tempoNegativo = Math.abs(tempoRestanteMin);
+                    const porcentagemNegativa = Math.min((tempoNegativo / limiteMinutos) * 100, 100);
+                    barra.style.width = porcentagemNegativa + '%';
+                    tempoSpan.textContent = `-${formatarTempo(tempoNegativo)}`;
+                }
+            }
+        }
+    }
 }
 
-// E atualize a função atualizarTopFuncionarios para usar a mesma lógica:
-function atualizarTopFuncionarios(carregamentos) {
-    const funcionariosStats = {};
-    
-    carregamentos.forEach(carregamento => {
-        // Contabiliza funcionário principal (1 carregamento)
-        if (!funcionariosStats[carregamento.funcionarioId]) {
-            funcionariosStats[carregamento.funcionarioId] = {
-                count: 0,
-                tempoTotal: 0,
-                nome: 'Não encontrado',
-                valor: 0
-            };
-        }
-        funcionariosStats[carregamento.funcionarioId].count++;
-        funcionariosStats[carregamento.funcionarioId].tempoTotal += 
-            (carregamento.fim - carregamento.inicio);
-        funcionariosStats[carregamento.funcionarioId].valor += 2.50;
-        
-        // Contabiliza carregadores auxiliares (1 carregamento cada)
-        if (carregamento.carregadores) {
-            carregamento.carregadores.forEach(carregadorId => {
-                if (!funcionariosStats[carregadorId]) {
-                    funcionariosStats[carregadorId] = {
-                        count: 0,
-                        tempoTotal: 0,
-                        nome: 'Não encontrado',
-                        valor: 0
-                    };
-                }
-                funcionariosStats[carregadorId].count++;
-                funcionariosStats[carregadorId].tempoTotal += 
-                    (carregamento.fim - carregamento.inicio);
-                funcionariosStats[carregadorId].valor += 2.50;
-            });
-        }
-    });
-    
-    // Busca os nomes dos funcionários
-    const promises = Object.keys(funcionariosStats).map(funcionarioId => {
-        return buscarFuncionario(funcionarioId)
-            .then(funcionario => {
-                funcionariosStats[funcionarioId].nome = funcionario.nome;
-            })
-            .catch(() => {
-                // Mantém o nome padrão se falhar
-            });
-    });
-    
-    Promise.all(promises).then(() => {
+
+
+// Função auxiliar
+function formatarTempo(minutos) {
+    const horas = Math.floor(minutos / 60);
+    const min = minutos % 60;
+    return `${horas}h${min.toString().padStart(2, '0')}`;
+}
+
+// Chame essa função a cada segundo
+setInterval(atualizarBarrasTempo, 1000);
+
+     // Atualiza o ranking na aba Ranking (Pódio)
+     function atualizarRankingDashboard() {
+         const hoje = new Date();
+         const mesAtual = hoje.getMonth() + 1;
+         const anoAtual = hoje.getFullYear();
+
+         document.getElementById('rankingMesAno').textContent = `Ranking de ${hoje.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}`;
+         document.getElementById('podiumContainer').innerHTML = ''; // Limpa o pódio
+         document.getElementById('rankingEmpty').style.display = 'none';
+         document.getElementById('rankingLoading').style.display = 'block'; // Mostra spinner
+
+         carregamentosRef.orderByChild('fim').once('value', (snapshot) => { // Busca todos carregamentos finalizados
+              const todosCarregamentos = snapshot.val() || {};
+              const carregamentosMes = Object.values(todosCarregamentos)
+                  .filter(c => {
+                     if (!c.fim) return false; // Apenas carregamentos finalizados
+                     const dataFim = new Date(c.fim);
+                     return dataFim.getMonth() + 1 === mesAtual && dataFim.getFullYear() === anoAtual;
+                  });
+
+              const funcionariosStats = {};
+
+              carregamentosMes.forEach(carregamento => {
+                 if (carregamento.participantes) {
+                     Object.entries(carregamento.participantes).forEach(([id, participacao]) => {
+                         // Apenas conta participações que começaram e terminaram DENTRO do carregamento finalizado
+                         if (participacao.entrada && participacao.saida) {
+                             if (!funcionariosStats[id]) {
+                                 funcionariosStats[id] = { count: 0, nome: participacao.nome || id };
+                             }
+                             funcionariosStats[id].count++;
+                         }
+                     });
+                 }
+              });
+
+              // Converte para array e ordena pelo count (descendente)
+              const ranking = Object.entries(funcionariosStats)
+                  .map(([id, stats]) => ({ id, nome: stats.nome, count: stats.count }))
+                  .sort((a, b) => b.count - a.count);
+
+              // Exibe o Top 3 no Pódio
+              const podiumContainer = document.getElementById('podiumContainer');
+              podiumContainer.innerHTML = ''; // Limpa novamente antes de adicionar
+
+              if (ranking.length >= 3) {
+                  const top3 = ranking.slice(0, 3);
+
+                  // Segundo Lugar
+                  podiumContainer.innerHTML += `
+                      <div class="podium-step silver">
+                          <div class="content">
+                              <div class="name">${top3[1].nome}</div>
+                              <div class="medal-icon"><i class="bi bi-award-fill medal-silver"></i></div>
+                               <!-- Quantidade de carregamentos removida aqui -->
+                          </div>
+                          <div class="base"></div>
+                      </div>
+                  `;
+
+                  // Primeiro Lugar
+                  podiumContainer.innerHTML += `
+                      <div class="podium-step gold">
+                          <div class="content">
+                               <div class="name">${top3[0].nome}</div>
+                              <div class="medal-icon"><i class="bi bi-award-fill medal-gold"></i></div>
+                               <!-- Quantidade de carregamentos removida aqui -->
+                          </div>
+                          <div class="base"></div>
+                      </div>
+                  `;
+
+                  // Terceiro Lugar
+                  podiumContainer.innerHTML += `
+                      <div class="podium-step bronze">
+                          <div class="content">
+                              <div class="name">${top3[2].nome}</div>
+                              <div class="medal-icon"><i class="bi bi-award-fill medal-bronze"></i></div>
+                               <!-- Quantidade de carregamentos removida aqui -->
+                          </div>
+                          <div class="base"></div>
+                      </div>
+                  `;
+              } else {
+                  document.getElementById('rankingEmpty').style.display = 'block';
+              }
+
+               document.getElementById('rankingLoading').style.display = 'none'; // Esconde spinner
+         });
+     }
+
+
+    // Atualiza o histórico (chamada após autenticação ou filtro)
+    function atualizarHistorico(mes, ano, funcionarioId = null) {
+        // Mostra spinner de carregamento
+        document.getElementById('tabelaHistorico').innerHTML = `
+            <tr>
+                <td colspan="8" class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </td>
+            </tr>
+        `;
+         document.getElementById('topFuncionariosHistorico').innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center">
+                    <div class="spinner-border text-primary spinner-border-sm" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </td>
+            </tr>
+         `;
+
+
+        const startDate = new Date(ano, mes - 1, 1).getTime();
+        const endDate = new Date(ano, mes, 0, 23, 59, 59).getTime();
+
+        let query = carregamentosRef.orderByChild('inicio'); // Ordena por início
+
+        // Filtra por período
+        query = query.startAt(startDate).endAt(endDate);
+
+        // Busca todos os carregamentos finalizados no período primeiro
+        query.once('value', (snapshot) => {
+            const todosCarregamentosNoPeriodo = snapshot.val() || {};
+            const carregamentosFinalizadosNoPeriodo = Object.values(todosCarregamentosNoPeriodo)
+                .filter(c => c.finalizado && c.fim); // Apenas carregamentos finalizados com fim
+
+            // Filtra localmente se houver filtro de funcionário
+            const carregamentosFiltrados = funcionarioId ?
+                carregamentosFinalizadosNoPeriodo.filter(c => c.participantes && c.participantes[funcionarioId]) :
+                carregamentosFinalizadosNoPeriodo;
+
+            // Ordena por data de início decrescente
+            carregamentosFiltrados.sort((a, b) => b.inicio - a.inicio);
+
+            // Atualiza estatísticas (considerando apenas carregamentos finalizados no período)
+            atualizarEstatisticasHistorico(carregamentosFiltrados);
+
+            // Preenche a tabela de histórico
+            preencherTabelaHistorico(carregamentosFiltrados);
+
+            // Atualiza ranking completo na aba Histórico (considerando apenas carregamentos finalizados no período)
+            atualizarRankingHistorico(carregamentosFiltrados);
+        });
+    }
+
+    function atualizarEstatisticasHistorico(carregamentosArray) {
+        const totalCaminhoes = carregamentosArray.length;
+        const tempoTotal = carregamentosArray.reduce((sum, c) => sum + (c.fim - c.inicio), 0);
+        const mediaTempo = totalCaminhoes > 0 ? (tempoTotal / totalCaminhoes / 60000).toFixed(2) : 0;
+
+        // Calcula o valor total estimado somando o valor parcial de CADA participação em CADA carregamento finalizado
+        let valorTotalEstimado = 0;
+        carregamentosArray.forEach(carregamento => {
+             if (carregamento.participantes) {
+                 Object.values(carregamento.participantes).forEach(participacao => {
+                     // Apenas soma o valor se o participante entrou e saiu DENTRO do carregamento finalizado
+                     if (participacao.entrada && participacao.saida) {
+                         valorTotalEstimado += calcularValorParcial(participacao.entrada, participacao.saida, carregamento.inicio, carregamento.fim);
+                     }
+                 });
+             }
+        });
+
+
+        document.getElementById('totalCaminhoes').textContent = totalCaminhoes;
+        document.getElementById('mediaTempo').textContent = `${mediaTempo} min`;
+        document.getElementById('valorTotal').textContent = `R$ ${valorTotalEstimado.toFixed(2).replace('.', ',')}`; // Formata para BRL
+    }
+
+    // Atualiza o ranking completo na aba Histórico
+    function atualizarRankingHistorico(carregamentos) {
+        const funcionariosStats = {};
+
+        carregamentos.forEach(carregamento => {
+            if (carregamento.participantes) {
+                 Object.entries(carregamento.participantes).forEach(([id, participacao]) => {
+                      // Apenas considera participações que começaram e terminaram DENTRO do carregamento finalizado
+                     if (participacao.entrada && participacao.saida) {
+                         if (!funcionariosStats[id]) {
+                             funcionariosStats[id] = {
+                                 count: 0,
+                                 tempoTotal: 0,
+                                 nome: participacao.nome || id, // Usa o nome da participação se existir, senão o ID
+                                 valorTotalGanho: 0 // Novo campo para valor total ganho
+                             };
+                         }
+                         funcionariosStats[id].count++;
+                         // Soma o tempo de permanência individual do funcionário neste carregamento
+                         funcionariosStats[id].tempoTotal += (participacao.saida - participacao.entrada);
+                         // Calcula e soma o valor parcial ganho neste carregamento
+                         funcionariosStats[id].valorTotalGanho += calcularValorParcial(participacao.entrada, participacao.saida, carregamento.inicio, carregamento.fim);
+                     }
+                 });
+            }
+        });
+
         // Converte para array e ordena
         const ranking = Object.entries(funcionariosStats)
             .map(([id, stats]) => ({
                 id,
                 nome: stats.nome,
                 count: stats.count,
+                // Calcula o tempo médio com base no tempo total de permanência individual
                 tempoMedio: stats.count > 0 ? (stats.tempoTotal / stats.count / 60000).toFixed(2) : 0,
-                valor: stats.valor.toFixed(2)
+                valor: stats.valorTotalGanho.toFixed(2) // Valor total ganho por este funcionário no período
             }))
-            .sort((a, b) => b.count - a.count);
-        
-        // Preenche a tabela de ranking
+            .sort((a, b) => b.count - a.count); // Ordena por número de carregamentos
+
+        // Preenche a tabela de ranking no Histórico
         let topFuncionariosHtml = '';
-        ranking.slice(0, 10).forEach((func, index) => {
+        ranking.slice(0, 20).forEach((func, index) => { // Mostra até 20 no histórico
             topFuncionariosHtml += `
                 <tr>
                     <td>${index + 1}</td>
                     <td>${func.nome} <small class="text-muted">${func.id}</small></td>
                     <td>${func.count}</td>
                     <td>${func.tempoMedio} min</td>
-                    <td>R$ ${func.valor}</td>
+                    <td>R$ ${func.valor.replace('.', ',')}</td> <!-- Formata para BRL -->
                 </tr>
             `;
         });
-        
-        document.getElementById('topFuncionarios').innerHTML = topFuncionariosHtml;
-    });
-}
 
-        // Função auxiliar para preencher a tabela
-        function preencherTabelaHistorico(carregamentosArray) {
-            let historicoHtml = '';
-            
-            // Busca todos os funcionários primeiro para otimizar
-            const funcionariosPromises = carregamentosArray.map(c => buscarFuncionario(c.funcionarioId).catch(() => null));
-            
-            Promise.all(funcionariosPromises).then(funcionarios => {
-                carregamentosArray.forEach((carregamento, index) => {
-                    const funcionario = funcionarios[index];
-                    const nomeFuncionario = funcionario ? funcionario.nome : carregamento.funcionarioId;
-                    
-                    const inicio = new Date(carregamento.inicio);
-                    const fim = carregamento.fim ? new Date(carregamento.fim) : null;
-                    const tempo = fim ? `${((fim - inicio) / 60000).toFixed(2)} min` : 'N/A';
-                    
-                    historicoHtml += `
-                        <tr>
-                            <td>${inicio.toLocaleDateString()}</td>
-                            <td>${carregamento.placa || 'N/A'}</td>
-                            <td>${nomeFuncionario}</td>
-                            <td>${inicio.toLocaleTimeString()}</td>
-                            <td>${fim ? fim.toLocaleTimeString() : 'N/A'}</td>
-                            <td>${tempo}</td>
-                            <td>${carregamento.doca || 'N/A'}</td>
-                        </tr>
-                    `;
-                });
-                
-                document.getElementById('tabelaHistorico').innerHTML = 
-                    historicoHtml || '<tr><td colspan="7">Nenhum registro encontrado</td></tr>';
-            });
+        document.getElementById('topFuncionariosHistorico').innerHTML = topFuncionariosHtml || '<tr><td colspan="5" class="text-center">Sem dados para ranking no período</td></tr>';
+    }
+
+
+    // Função auxiliar para preencher a tabela de histórico
+    function preencherTabelaHistorico(carregamentosArray) {
+        let historicoHtml = '';
+
+        if (carregamentosArray.length === 0) {
+            document.getElementById('tabelaHistorico').innerHTML = '<tr><td colspan="8" class="text-center">Nenhum registro encontrado para o período/filtro</td></tr>';
+            return;
         }
 
-        // No evento DOMContentLoaded, altere a inicialização para:
-        document.addEventListener('DOMContentLoaded', function() {
-            atualizarTemposContinuamente();
-            // ... outros códigos ...
-            
-            // Configura o filtro do histórico para o mês/ano atual
-            const hoje = new Date();
-            const mesAtual = (hoje.getMonth() + 1).toString().padStart(2, '0');
-            const anoAtual = hoje.getFullYear().toString();
-            
-            document.getElementById('filtroMes').value = mesAtual;
-            document.getElementById('filtroAno').value = anoAtual;
-            
-            // Inicia a escuta em tempo real
-            atualizarHistorico(parseInt(mesAtual), parseInt(anoAtual));
-            
-            // Atualiza quando os filtros mudarem
-            document.getElementById('btnFiltrar').addEventListener('click', function() {
-                const mes = parseInt(document.getElementById('filtroMes').value);
-                const ano = parseInt(document.getElementById('filtroAno').value);
-                const funcionarioId = document.getElementById('filtroFuncionario').value.trim() || null;
-                
-                // Remove o listener anterior para evitar múltiplas escutas
-                carregamentosRef.off('value');
-                
-                // Atualiza com os novos filtros
-                atualizarHistorico(mes, ano, funcionarioId);
-            });
-            
+        carregamentosArray.forEach((carregamento) => {
+            const inicio = new Date(carregamento.inicio);
+            const fim = carregamento.fim ? new Date(carregamento.fim) : null;
+            const tempoTotalCarregamento = fim ? `${((fim - inicio) / 60000).toFixed(2)} min` : 'N/A';
 
-        });
+            // Lista de todos os participantes (mesmo que tenham saído antes do fim)
+            let participantesHtml = '';
+            if (carregamento.participantes) {
+                 const participantesArray = Object.entries(carregamento.participantes)
+                     .map(([id, p]) => ({id, nome: p.nome || id, entrada: p.entrada, saida: p.saida}));
 
-        // Atualiza o ranking de funcionários
-        function atualizarTopFuncionarios(carregamentos) {
-            const funcionariosStats = {};
-            
-            carregamentos.forEach(carregamento => {
-                // Contabiliza funcionário principal
-                if (!funcionariosStats[carregamento.funcionarioId]) {
-                    funcionariosStats[carregamento.funcionarioId] = {
-                        count: 0,
-                        tempoTotal: 0,
-                        nome: 'Não encontrado'
-                    };
-                }
-                funcionariosStats[carregamento.funcionarioId].count++;
-                funcionariosStats[carregamento.funcionarioId].tempoTotal += 
-                    (carregamento.fim - carregamento.inicio);
-                
-                // Contabiliza carregadores auxiliares
-                if (carregamento.carregadores) {
-                    carregamento.carregadores.forEach(carregadorId => {
-                        if (!funcionariosStats[carregadorId]) {
-                            funcionariosStats[carregadorId] = {
-                                count: 0,
-                                tempoTotal: 0,
-                                nome: 'Não encontrado'
-                            };
-                        }
-                        funcionariosStats[carregadorId].count++;
-                        funcionariosStats[carregadorId].tempoTotal += 
-                            (carregamento.fim - carregamento.inicio);
-                    });
-                }
-            });
-            
-            // Busca os nomes dos funcionários
-            const promises = Object.keys(funcionariosStats).map(funcionarioId => {
-                return buscarFuncionario(funcionarioId)
-                    .then(funcionario => {
-                        funcionariosStats[funcionarioId].nome = funcionario.nome;
-                    })
-                    .catch(() => {
-                        // Mantém o nome padrão se falhar
-                    });
-            });
-            
-            Promise.all(promises).then(() => {
-                // Converte para array e ordena
-                const ranking = Object.entries(funcionariosStats)
-                    .map(([id, stats]) => ({
-                        id,
-                        nome: stats.nome,
-                        count: stats.count,
-                        tempoMedio: stats.count > 0 ? (stats.tempoTotal / stats.count / 60000).toFixed(2) : 0
-                    }))
-                    .sort((a, b) => b.count - a.count);
-                
-                // Preenche a tabela de ranking
-                let topFuncionariosHtml = '';
-                ranking.slice(0, 10).forEach((func, index) => {
-                    topFuncionariosHtml += `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${func.nome} <small class="text-muted">${func.id}</small></td>
-                            <td>${func.count}</td>
-                            <td>${func.tempoMedio}</td>
-                            <td>R$ ${(func.count * 2.5).toFixed(2)}</td> <!-- Exemplo: R$25 por carregamento -->
-                        </tr>
-                    `;
-                });
-                
-                document.getElementById('topFuncionarios').innerHTML = topFuncionariosHtml;
-            });
-        }
+                 // Opcional: ordenar participantes por tempo de entrada ou id/nome
+                 participantesArray.sort((a, b) => a.entrada - b.entrada); // Ordena por tempo de entrada
 
-        // Inicia um novo carregamento
-        function iniciarCarregamento() {
-    // Pega o primeiro input de funcionário como principal
-    const funcionarioInputs = document.querySelectorAll('.funcionario-input');
-    const funcionarioId = funcionarioInputs[0].value.trim();
-    const placa = document.getElementById('placaCaminhao').value.trim().toUpperCase();
-    const doca = document.getElementById('docaNumero').value;
-    
-    if (!funcionarioId || !placa || !doca) {
-        alert('Preencha todos os campos obrigatórios!');
-        return;
-    }
-    
-    // Verifica se o funcionário existe
-    buscarFuncionario(funcionarioId)
-        .then(() => {
-            // Verifica se a doca está disponível
-            docasRef.child(doca).once('value', (snapshot) => {
-                const docaStatus = snapshot.val();
-                
-                if (docaStatus && docaStatus.ocupada) {
-                    alert(`Doca ${doca} já está ocupada!`);
-                    return;
-                }
-                
-                // Obtém todos os carregadores (todos os inputs exceto o primeiro)
-                const carregadores = Array.from(funcionarioInputs)
-                    .slice(1) // Pula o primeiro que é o principal
-                    .map(input => input.value.trim())
-                    .filter(id => id && id !== funcionarioId);
-                
-                // Cria o objeto de carregamento
-                const carregamento = {
-                    funcionarioId,
-                    carregadores,
-                    placa,
-                    doca,
-                    inicio: new Date().getTime(),
-                    finalizado: false
-                };
-                
-                // Salva no Firebase
-                const newKey = carregamentosRef.push().key;
-                carregamentosRef.child(newKey).set(carregamento);
-                
-                // Atualiza status da doca
-                docasRef.child(doca).set({
-                    ocupada: true,
-                    placa,
-                    inicio: carregamento.inicio
-                });
-                
-                // Limpa o formulário
-                document.getElementById('formContainer').style.display = 'none';
-                funcionarioInputs.forEach(input => input.value = '');
-                document.getElementById('placaCaminhao').value = '';
-                
-                alert('Carregamento iniciado com sucesso!');
-            });
-        })
-        .catch(() => {
-            alert('Funcionário não encontrado! Verifique o código.');
-        });
-}
-
-        // Finaliza um carregamento
-        // Finaliza um carregamento
-function finalizarCarregamento() {
-    const funcionarioInputs = document.querySelectorAll('.funcionario-input');
-    const funcionarioId = funcionarioInputs[0].value.trim();
-    
-    if (!funcionarioId) {
-        alert('Informe o código do funcionário!');
-        return;
-    }
-    
-    // Busca carregamento em andamento
-    carregamentosRef.orderByChild('funcionarioId').equalTo(funcionarioId)
-        .once('value', (snapshot) => {
-            const carregamentos = snapshot.val() || {};
-            let carregamentoEmAndamento = Object.entries(carregamentos)
-                .find(([key, c]) => c.inicio && !c.finalizado);
-            
-            // Se não encontrou pelo funcionário principal, verifica nos carregadores auxiliares
-            if (!carregamentoEmAndamento) {
-                carregamentosRef.orderByChild('finalizado').equalTo(false)
-                    .once('value', (snapshot) => {
-                        const todosCarregamentos = snapshot.val() || {};
-                        carregamentoEmAndamento = Object.entries(todosCarregamentos)
-                            .find(([key, c]) => 
-                                c.carregadores && 
-                                c.carregadores.includes(funcionarioId)
-                            );
-                            
-                        if (carregamentoEmAndamento) {
-                            finalizarCarregamentoFirebase(...carregamentoEmAndamento);
-                        } else {
-                            alert('Nenhum carregamento em andamento encontrado para este funcionário!');
-                        }
-                    });
+                 participantesHtml = participantesArray
+                     .map(p => {
+                          const statusParticipacao = p.saida ? '(saiu)' : '(entrou)'; // Indica se saiu ou entrou
+                          return `${p.nome} <small class="text-muted">${statusParticipacao}</small>`;
+                      })
+                     .join('<br>');
             } else {
-                finalizarCarregamentoFirebase(...carregamentoEmAndamento);
+                participantesHtml = 'Nenhum';
             }
+
+
+            historicoHtml += `
+                <tr>
+                    <td>${inicio.toLocaleDateString()}</td>
+                    <td>${carregamento.placa || 'N/A'}</td>
+                     <td>${participantesHtml}</td> <!-- Exibe todos os participantes -->
+                    <td>${inicio.toLocaleTimeString()}</td>
+                    <td>${fim ? fim.toLocaleTimeString() : 'N/A'}</td>
+                    <td>${tempoTotalCarregamento}</td>
+                    <td>${carregamento.doca || 'N/A'}</td>
+                </tr>
+            `;
         });
-}
 
-// Função auxiliar para finalizar no Firebase
-function finalizarCarregamentoFirebase(key, carregamento) {
-    // Atualiza o carregamento
-    const updates = {
-        fim: new Date().getTime(),
-        finalizado: true
-    };
-    
-    carregamentosRef.child(key).update(updates);
-    
-    // Libera a doca
-    docasRef.child(carregamento.doca).update({
-        ocupada: false,
-        placa: '',
-        inicio: null
-    });
-    
-    // Limpa o formulário
-    document.getElementById('formContainer').style.display = 'none';
-    document.querySelectorAll('.funcionario-input').forEach(input => input.value = '');
-    
-    alert('Carregamento finalizado com sucesso!');
-}
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            // Inicializa o dashboard
-            atualizarDashboard();
-            
-            // Configura o filtro do histórico para o mês/ano atual
-            const hoje = new Date();
-            document.getElementById('filtroMes').value = (hoje.getMonth() + 1).toString().padStart(2, '0');
-            document.getElementById('filtroAno').value = hoje.getFullYear().toString();
-            atualizarHistorico(hoje.getMonth() + 1, hoje.getFullYear());
-            
-            // Botão Iniciar Carregamento
-            document.getElementById('btnIniciarCarregamento').addEventListener('click', function() {
-                operacaoAtual = 'iniciar';
-                document.getElementById('formContainer').style.display = 'block';
-                document.getElementById('formTitle').textContent = 'Iniciar Carregamento';
-                document.getElementById('btnConfirmar').textContent = 'Iniciar';
-            });
-            
-            // Botão Finalizar Carregamento
-            document.getElementById('btnFinalizarCarregamento').addEventListener('click', function() {
-                operacaoAtual = 'finalizar';
-                document.getElementById('formContainer').style.display = 'block';
-                document.getElementById('formTitle').textContent = 'Finalizar Carregamento';
-                document.getElementById('btnConfirmar').textContent = 'Finalizar';
-                
-                // Esconde campos não necessários para finalização
-                document.getElementById('placaCaminhao').closest('.mb-3').style.display = 'none';
-                document.getElementById('docaNumero').closest('.mb-3').style.display = 'none';
-                document.getElementById('btnAddCarregador').style.display = 'none';
-            });
-            
-            // Botão Confirmar (Iniciar/Finalizar)
-            document.getElementById('btnConfirmar').addEventListener('click', function() {
-                if (operacaoAtual === 'iniciar') {
-                    iniciarCarregamento();
-                } else if (operacaoAtual === 'finalizar') {
-                    finalizarCarregamento();
-                }
-            });
-            
-            // Botão Cancelar
-            document.getElementById('btnCancelar').addEventListener('click', function() {
-                document.getElementById('formContainer').style.display = 'none';
-                document.getElementById('placaCaminhao').closest('.mb-3').style.display = 'block';
-                document.getElementById('docaNumero').closest('.mb-3').style.display = 'block';
-                document.getElementById('btnAddCarregador').style.display = 'block';
-            });
-            
-            // Botão Adicionar Carregador
-            document.getElementById('btnAddCarregador').addEventListener('click', function() {
-                const container = document.getElementById('carregadoresContainer');
-                const newInput = document.createElement('div');
-                newInput.className = 'mb-3';
-                newInput.innerHTML = `
-                    <label class="form-label">Código do Carregador Adicional</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control funcionario-input" placeholder="Ex: GZL-EO-1234">
-                        <button class="btn btn-outline-secondary btn-scan" type="button">
-                            <i class="bi bi-camera"></i> Ler QR Code
-                        </button>
-                    </div>
-                `;
-                container.appendChild(newInput);
-                
-                // Adiciona evento ao novo botão de scan
-                newInput.querySelector('.btn-scan').addEventListener('click', function() {
-                    iniciarScanner(newInput.querySelector('.funcionario-input'));
-                });
-            });
-            
-            // Botões de scan existentes
-            document.querySelectorAll('.btn-scan').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const input = this.closest('.input-group').querySelector('.funcionario-input');
-                    iniciarScanner(input);
-                });
-            });
-            
-            // Fechar scanner
-            document.getElementById('btnCloseScanner').addEventListener('click', pararScanner);
-            
-            // Cadastrar funcionário
-            document.getElementById('btnCadastrar').addEventListener('click', function() {
-                const nome = document.getElementById('novoNome').value.trim();
-                const cargo = document.getElementById('novoCargo').value.trim();
-                
-                if (!nome || !cargo) {
-                    alert('Preencha todos os campos!');
-                    return;
-                }
-                
-                const codigo = gerarCodigoFuncionario();
-                document.getElementById('codigoGerado').textContent = codigo;
-                document.getElementById('codigoGerado').style.display = 'block';
-                
-                // Gera QR code
-                gerarQRCode(codigo);
-                document.getElementById('qrCodeContainer').style.display = 'block';
-                
-                // Mostra informações
-                document.getElementById('infoCadastro').innerHTML = `
-                    <div class="alert alert-success mt-3">
-                        <strong>Funcionário cadastrado com sucesso!</strong><br>
-                        Nome: ${nome}<br>
-                        Cargo: ${cargo}
-                    </div>
-                `;
-                
-                // Mostra botão para download do PDF
-                document.getElementById('btnDownloadPDF').style.display = 'block';
-                
-                // Salva no Firebase
-                funcionariosRef.child(codigo).set({
-                    nome,
-                    cargo,
-                    dataCadastro: new Date().getTime()
-                });
-            });
-            
-            // Download PDF
-            document.getElementById('btnDownloadPDF').addEventListener('click', function() {
-                const codigo = document.getElementById('codigoGerado').textContent;
-                const nome = document.getElementById('novoNome').value.trim();
-                const cargo = document.getElementById('novoCargo').value.trim();
-                gerarPDFCodigo(codigo, nome, cargo);
-            });
-            
-            // Buscar funcionário
-            document.getElementById('btnBuscar').addEventListener('click', function() {
-                const termoBusca = document.getElementById('buscarFuncionario').value.trim();
-                if (!termoBusca) {
-                    alert('Informe o código ou nome do funcionário!');
-                    return;
-                }
+        document.getElementById('tabelaHistorico').innerHTML = historicoHtml;
+    }
 
-                // Verifica se é um código (começa com GZL-EO)
-                if (termoBusca.startsWith('GZL-EO')) {
-                    buscarFuncionario(termoBusca, true);
-                } else {
-                    // Busca por nome
-                    funcionariosRef.orderByChild('nome').once('value', (snapshot) => {
-                        const funcionarios = snapshot.val() || {};
-                        const resultados = Object.entries(funcionarios)
-                            .filter(([id, func]) => 
-                                func.nome && func.nome.toLowerCase().includes(termoBusca.toLowerCase())
-                            )
-                            .map(([id, func]) => ({ id, ...func }));
 
-                        if (resultados.length === 0) {
-                            alert('Nenhum funcionário encontrado com esse nome!');
-                        } else if (resultados.length === 1) {
-                            // Se só um resultado, mostra diretamente
-                            buscarFuncionario(resultados[0].id, true);
-                        } else {
-                            // Se múltiplos resultados, mostra lista
-                            let html = '<div class="list-group mb-3">';
-                            resultados.forEach(func => {
-                                html += `
-                                    <a href="#" class="list-group-item list-group-item-action" 
-                                    onclick="buscarFuncionario('${func.id}', true); return false;">
-                                        ${func.nome} <small class="text-muted">${func.id}</small>
-                                    </a>
-                                `;
-                            });
-                            html += '</div>';
-                            document.getElementById('infoFuncionario').innerHTML = html;
-                        }
-                    });
-                }
-            });
-            
-            
-            // Botão de scan na busca
-            document.getElementById('btnBuscarQRCode').addEventListener('click', function() {
-                const input = document.getElementById('buscarFuncionario');
-                iniciarScanner(input);
-            });
-            
-            // Filtrar histórico
-            document.getElementById('btnFiltrar').addEventListener('click', function() {
-                const mes = parseInt(document.getElementById('filtroMes').value);
-                const ano = parseInt(document.getElementById('filtroAno').value);
-                const funcionarioId = document.getElementById('filtroFuncionario').value.trim() || null;
-                
-                atualizarHistorico(mes, ano, funcionarioId);
-            });
-        });
+    // Chama a função de inicialização quando a página carregar e o usuário estiver autenticado
+    // O listener auth.onAuthStateChanged já faz isso.
     </script>
 </body>
 </html>
