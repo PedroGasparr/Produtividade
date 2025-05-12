@@ -9,7 +9,7 @@
     --light-color: #f8f9fa;
     --dark-color: #212529;
     --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
-    --gradient-accent: linear-gradient(135deg, #00a143 0%, #b80606 100%);
+    --gradient-accent: linear-gradient(135deg, #00a142 0%, #b80606 100%);
   }
   
   body {
