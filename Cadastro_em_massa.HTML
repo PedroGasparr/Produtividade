@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cadastro em Massa</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .codigo-funcionario {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0d6efd;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .progress {
+            height: 25px;
+        }
+        .progress-bar {
+            font-size: 1rem;
+            line-height: 25px;
+        }
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .doca-container {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #dee2e6;
+        }
+        .doca-ocupada {
+            background-color: #fff8e1;
+        }
+        .doca-header {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #0d6efd;
+        }
+        .time-critical {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .time-warning {
+            color: #ffc107;
+            font-weight: bold;
+        }
+        .time-normal {
+            color: #28a745;
+        }
+        #videoContainer {
+            position: relative;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        #video {
+            width: 100%;
+            background: #000;
+        }
+        #scanOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        #scanBox {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 60%;
+            border: 3px solid #0d6efd;
+            border-radius: 5px;
+        }
+        #btnCloseScanner {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+        }
+        .funcionario-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .funcionario-item:hover {
+            background-color: #e9ecef;
+        }
+        .funcionario-item.erro {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .funcionario-item.sucesso {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Sistema de Cadastro em Massa</h1>
+       
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Cadastrar Funcionários em Massa</h5>
+               
+                <div class="mb-3">
+                    <label for="listaFuncionarios" class="form-label">Lista de Funcionários (Nome;Cargo)</label>
+                    <textarea class="form-control" id="listaFuncionarios" rows="10" placeholder="Digite os funcionários, um por linha, no formato: Nome Completo;Cargo&#10;Ex: João da Silva;Carregador&#10;Maria Oliveira;Ajudante"></textarea>
+                </div>
+               
+                <div class="mb-3">
+                    <label class="form-label">Opções</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="gerarPDF" checked>
+                        <label class="form-check-label" for="gerarPDF">Gerar PDF para cada funcionário</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="gerarZip" checked>
+                        <label class="form-check-label" for="gerarZip">Compactar PDFs em arquivo ZIP</label>
+                    </div>
+                </div>
+               
+                <button id="btnProcessar" class="btn btn-primary btn-lg w-100">
+                    <i class="bi bi-people-fill"></i> Cadastrar Funcionários
+                </button>
+               
+                <div id="progressoContainer" class="mt-3" style="display: none;">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span id="progressoStatus">Processando...</span>
+                        <span id="progressoContador">0/0</span>
+                    </div>
+                    <div class="progress">
+                        <div id="progressoBarra" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%">0%</div>
+                    </div>
+                </div>
+               
+                <div id="resultadoContainer" class="mt-3">
+                    <!-- Resultados serão exibidos aqui -->
+                </div>
+            </div>
+        </div>
+       
+        <div class="text-end fixed-bottom mb-3 me-3">
+            <button id="btnLogout" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-box-arrow-right"></i> Sair
+            </button>
+        </div>
+    </div>
+ 
+    <!-- Inclui as bibliotecas necessárias -->
+    <script src="key.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+   
+    <script>
+        // Inicializa o Firebase com a mesma configuração do sistema principal
+        const firebaseConfig = {
+            apiKey: "AIzaSyBAH_sO68BD_vt9J40Hf8rdgLTNQEuEEBc",
+            authDomain: "produtividade-bc.firebaseapp.com",
+            projectId: "produtividade-bc",
+            storageBucket: "produtividade-bc.appspot.com",
+            messagingSenderId: "665932698083",
+            appId: "1:665932698083:web:1c807c6b1571e3024bd0d6",
+            measurementId: "G-608P3H613B"
+        };
+ 
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const auth = firebase.auth();
+       
+        // Referências do banco de dados
+        const funcionariosRef = database.ref('funcionarios');
+ 
+        // Verifica autenticação
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = "index.html";
+            }
+        });
+ 
+        // Botão de logout
+        document.getElementById('btnLogout').addEventListener('click', () => {
+            auth.signOut().then(() => {
+                window.location.href = "index.html";
+            });
+        });
+       
+        // Gera um código único para o funcionário (mesma função do sistema principal)
+        function gerarCodigoFuncionario() {
+            const prefixo = "GZL-EO-";
+            const randomPart = Math.floor(1000 + Math.random() * 9000); // Número entre 1000 e 9999
+            return prefixo + randomPart;
+        }
+       
+        // Gera QR Code para o funcionário (mesma função do sistema principal)
+        function gerarQRCode(codigo, canvasId = 'qrCodeCanvas') {
+            return new Promise((resolve, reject) => {
+                const canvas = document.createElement('canvas');
+                QRCode.toCanvas(canvas, codigo, { width: 200 }, (error) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(canvas);
+                    }
+                });
+            });
+        }
+       
+        // Gera PDF com o código do funcionário (mesma função do sistema principal)
+        function gerarPDFCodigo(codigo, nome, cargo) {
+            return new Promise((resolve, reject) => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+               
+                // Configurações iniciais
+                doc.setFontSize(20);
+                doc.setTextColor(40);
+                doc.setFont("helvetica", "bold");
+                doc.text('Código do Funcionário', 105, 20, { align: 'center' });
+               
+                // Informações do funcionário
+                doc.setFontSize(14);
+                doc.setFont("helvetica", "normal");
+                doc.text('Nome:', 20, 40);
+                doc.text(nome, 50, 40);
+               
+                doc.text('Cargo:', 20, 50);
+                doc.text(cargo, 50, 50);
+               
+                doc.text('Código:', 20, 70);
+                doc.setFontSize(24);
+                doc.setFont("helvetica", "bold");
+                doc.text(codigo, 50, 70);
+               
+                // Gera QR code e adiciona ao PDF
+                gerarQRCode(codigo).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    doc.addImage(imgData, 'PNG', 140, 40, 50, 50);
+                   
+                    // Data de emissão
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "normal");
+                    const hoje = new Date();
+                    doc.text(`Emitido em: ${hoje.toLocaleDateString()}`, 20, 130);
+                   
+                    // Gera o PDF como blob
+                    const pdfBlob = doc.output('blob');
+                    resolve({
+                        blob: pdfBlob,
+                        nomeArquivo: `codigo-funcionario-${codigo}.pdf`
+                    });
+                }).catch(error => {
+                    reject(error);
+                });
+            });
+        }
+       
+        // Processa a lista de funcionários
+        document.getElementById('btnProcessar').addEventListener('click', async function() {
+            const listaFuncionarios = document.getElementById('listaFuncionarios').value.trim();
+            const gerarPDF = document.getElementById('gerarPDF').checked;
+            const gerarZip = document.getElementById('gerarZip').checked;
+           
+            if (!listaFuncionarios) {
+                alert('Digite a lista de funcionários!');
+                return;
+            }
+           
+            // Limpa resultados anteriores
+            document.getElementById('resultadoContainer').innerHTML = '';
+           
+            // Mostra a barra de progresso
+            const progressoContainer = document.getElementById('progressoContainer');
+            const progressoBarra = document.getElementById('progressoBarra');
+            const progressoStatus = document.getElementById('progressoStatus');
+            const progressoContador = document.getElementById('progressoContador');
+           
+            progressoContainer.style.display = 'block';
+           
+            // Desabilita o botão durante o processamento
+            const btnProcessar = document.getElementById('btnProcessar');
+            btnProcessar.disabled = true;
+            btnProcessar.innerHTML = '<i class="bi bi-hourglass"></i> Processando...';
+           
+            // Divide a lista em linhas
+            const linhas = listaFuncionarios.split('\n').filter(linha => linha.trim() !== '');
+            const total = linhas.length;
+            let sucessos = 0;
+            let erros = 0;
+           
+            // Cria um ZIP se necessário
+            let zip = null;
+            if (gerarZip && gerarPDF) {
+                zip = new JSZip();
+            }
+           
+            // Processa cada linha
+            for (let i = 0; i < linhas.length; i++) {
+                const linha = linhas[i].trim();
+                const partes = linha.split(';');
+               
+                // Atualiza o progresso
+                const progresso = Math.floor(((i + 1) / total) * 100);
+                progressoBarra.style.width = `${progresso}%`;
+                progressoBarra.textContent = `${progresso}%`;
+                progressoContador.textContent = `${i + 1}/${total}`;
+                progressoStatus.textContent = `Processando: ${linha.substring(0, 30)}${linha.length > 30 ? '...' : ''}`;
+               
+                // Cria elemento para mostrar o resultado deste funcionário
+                const resultadoItem = document.createElement('div');
+                resultadoItem.className = 'funcionario-item';
+                resultadoItem.innerHTML = `
+                    <strong>${linha}</strong>
+                    <div class="status-item">Processando...</div>
+                `;
+                document.getElementById('resultadoContainer').appendChild(resultadoItem);
+               
+                try {
+                    // Verifica se a linha tem o formato correto
+                    if (partes.length < 2) {
+                        throw new Error('Formato inválido. Use: Nome;Cargo');
+                    }
+                   
+                    const nome = partes[0].trim();
+                    const cargo = partes[1].trim();
+                   
+                    if (!nome || !cargo) {
+                        throw new Error('Nome e cargo são obrigatórios');
+                    }
+                   
+                    // Gera código do funcionário
+                    const codigo = gerarCodigoFuncionario();
+                   
+                    // Salva no Firebase
+                    await funcionariosRef.child(codigo).set({
+                        nome,
+                        cargo,
+                        dataCadastro: new Date().getTime()
+                    });
+                   
+                    // Gera PDF se necessário
+                    let pdfInfo = null;
+                    if (gerarPDF) {
+                        pdfInfo = await gerarPDFCodigo(codigo, nome, cargo);
+                       
+                        // Adiciona ao ZIP se necessário
+                        if (gerarZip && zip) {
+                            zip.file(pdfInfo.nomeArquivo, pdfInfo.blob);
+                        } else {
+                            // Faz download individual se não for compactar
+                            saveAs(pdfInfo.blob, pdfInfo.nomeArquivo);
+                        }
+                    }
+                   
+                    // Atualiza o resultado com sucesso
+                    resultadoItem.className = 'funcionario-item sucesso';
+                    resultadoItem.innerHTML = `
+                        <strong>${nome} - ${cargo}</strong>
+                        <div class="status-item"><span class="codigo-funcionario">${codigo}</span></div>
+                        <div>Cadastrado com sucesso!</div>
+                        ${gerarPDF ? `<small>PDF gerado: ${pdfInfo.nomeArquivo}</small>` : ''}
+                    `;
+                   
+                    sucessos++;
+                } catch (error) {
+                    // Atualiza o resultado com erro
+                    resultadoItem.className = 'funcionario-item erro';
+                    resultadoItem.innerHTML = `
+                        <strong>${linha}</strong>
+                        <div class="status-item">Erro: ${error.message}</div>
+                    `;
+                   
+                    erros++;
+                }
+               
+                // Pequeno delay para não sobrecarregar o navegador
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+           
+            // Finaliza o processamento
+            progressoBarra.className = 'progress-bar';
+            progressoBarra.style.width = '100%';
+            progressoBarra.textContent = '100%';
+            progressoStatus.textContent = 'Processamento concluído!';
+            progressoContador.textContent = `Sucessos: ${sucessos} | Erros: ${erros}`;
+           
+            // Gera o ZIP se necessário
+            if (gerarZip && gerarPDF && zip && sucessos > 0) {
+                try {
+                    const content = await zip.generateAsync({ type: 'blob' });
+                    saveAs(content, 'codigos-funcionarios.zip');
+                } catch (error) {
+                    alert('Erro ao gerar arquivo ZIP: ' + error.message);
+                }
+            }
+           
+            // Reabilita o botão
+            btnProcessar.disabled = false;
+            btnProcessar.innerHTML = '<i class="bi bi-people-fill"></i> Cadastrar Funcionários';
+           
+            // Mostra resumo
+            const resumo = document.createElement('div');
+            resumo.className = 'alert alert-info mt-3';
+            resumo.innerHTML = `
+                <strong>Processamento concluído!</strong><br>
+                Total de linhas: ${total}<br>
+                Cadastros bem-sucedidos: ${sucessos}<br>
+                Erros: ${erros}
+            `;
+            document.getElementById('resultadoContainer').prepend(resumo);
+           
+            // Rola para o final
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+    </script>
+</body>
+</html>
