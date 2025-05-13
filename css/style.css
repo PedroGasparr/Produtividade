@@ -368,12 +368,13 @@
   }
   
   .doca-ocupada {
-    border-left: 4px solid var(--danger-color);
+    border-left: 4px solid var(--success-color);
     animation: pulse 2s infinite;
+    border-color: var(--success-color);
   }
   
   @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4); }
+    0% { box-shadow: 0 0 0 0 rgba(54, 244, 70, 0.4); }
     70% { box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
     100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); }
   }

@@ -51,7 +51,7 @@
             width: 100px;
             text-align: center;
             position: relative;
-            margin: 0 200px;
+            margin: 0 35px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -66,7 +66,7 @@
             margin-bottom: 10px;
         }
         .podium-step .base {
-            width: 100%;
+            width: 100px;
             background-color: #e9ecef;
             border: 1px solid #dee2e6;
             position: relative;
@@ -83,7 +83,7 @@
             left: 50%;
             transform: translateX(-50%);
             margin-bottom: 10px;
-            width: 150%;
+            width: 150px;
             white-space: normal;
             word-wrap: break-word;
         }
@@ -102,6 +102,7 @@
         }
         .progress-bar {
             transition: width 0.5s linear;
+            
         }
         /* Novos estilos */
         .login-container {
@@ -128,6 +129,11 @@
         }
         .paused-badge {
             background-color: #dc3545;
+        }
+        #armagensContainer{
+            border-radius: 25px;
+            border-style: solid 5px;
+            border-color: red;
         }
     </style>
 </head>
@@ -251,6 +257,7 @@
                                 <div class="mb-3" id="armagensContainer" style="display: none;">
                                     <label for="armagens" class="form-label">Armagens (onde foi buscar material)</label>
                                     <select class="form-select" id="armagens" multiple="multiple">
+                                        <option value="Unico Armazém">Unico Armazém</option>
                                         <option value="Armazém 1">Armazém 1</option>
                                         <option value="Armazém 2">Armazém 2</option>
                                         <option value="Armazém 3">Armazém 3</option>
@@ -259,6 +266,11 @@
                                         <option value="Armazém 6">Armazém 6</option>
                                         <option value="Armazém 7">Armazém 7</option>
                                         <option value="Armazém 8">Armazém 8</option>
+                                        <option value="Armazém Externo 1">Armazém Externo 1</option>
+                                        <option value="Armazém Externo 2">Armazém Externo 2</option>
+                                        <option value="Armazém Externo 3">Armazém Externo 3</option>
+                                        <option value="Armazém Externo 4">Armazém Externo 4</option>
+                                        <option value="Armazém Externo 5">Armazém Externo 5</option>
                                     </select>
                                 </div>
                                 <div class="mb-3" id="mixContainer" style="display: none;">
@@ -2070,7 +2082,7 @@
 
                         if (tempoRestanteMin > avisoAmareloMinutos) {
                             barra.className = 'progress-bar bg-success';
-                        } else if (tempoRestanteMin > 0) {
+                        } else if (tempoRestanteMin > 45) {
                             barra.className = 'progress-bar bg-warning';
                         } else {
                             barra.className = 'progress-bar bg-danger';
